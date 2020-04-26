@@ -25,6 +25,7 @@ namespace Abp.Localization.Dictionaries.Xml
 
         protected override void InitializeDictionaries()
         {
+            //读取不同程序集中的xml多语言配置
             var allCultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
             var resourceNames = _assembly.GetManifestResourceNames().Where(resouceName =>
                 allCultureInfos.Any(culture => resouceName.EndsWith($"{SourceName}.xml", true, null) ||

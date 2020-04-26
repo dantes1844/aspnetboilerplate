@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq.Expressions;
 using Abp.Application.Features;
@@ -147,12 +148,18 @@ namespace Abp
 
         private void AddLocalizationSources()
         {
-            Configuration.Localization.Sources.Add(
-                new DictionaryBasedLocalizationSource(
-                    AbpConsts.LocalizationSourceName,
-                    new XmlEmbeddedFileLocalizationDictionaryProvider(
-                        typeof(AbpKernelModule).GetAssembly(), "Abp.Localization.Sources.AbpXmlSource"
-                    )));
+            //添加Abp开头的本地化资源配置项
+            Debug.WriteLine("添加Abp开头的本地化资源配置项");
+
+            //要读取本地化资源的程序集
+            var assembly = typeof(AbpKernelModule).GetAssembly();
+            //资源文件除文件名外的完整命名空间
+            var rootNameSpaces = "Abp.Localization.Sources.AbpXmlSource";
+            //资源解析器
+            var provider = new XmlEmbeddedFileLocalizationDictionaryProvider(assembly, rootNameSpaces);
+            //资源
+            var source = new DictionaryBasedLocalizationSource(AbpConsts.LocalizationSourceName, provider);
+            Configuration.Localization.Sources.Add(source);
         }
 
         private void ConfigureCaches()

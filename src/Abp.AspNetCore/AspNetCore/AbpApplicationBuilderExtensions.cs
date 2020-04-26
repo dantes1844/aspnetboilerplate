@@ -39,7 +39,7 @@ namespace Abp.AspNetCore
                 app.UseCastleLoggerFactory();
             }
 
-            InitializeAbp(app);
+            InitializeAbp(app);//执行各个模块的前置、后置动作的初始化
 
             if (options.UseAbpRequestLocalization)
             {

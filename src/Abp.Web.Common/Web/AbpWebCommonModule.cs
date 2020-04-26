@@ -1,4 +1,5 @@
-﻿using Abp.Configuration.Startup;
+﻿using System.Diagnostics;
+using Abp.Configuration.Startup;
 using Abp.Localization.Dictionaries;
 using Abp.Localization.Dictionaries.Xml;
 using Abp.Modules;
@@ -30,6 +31,8 @@ namespace Abp.Web
 
             Configuration.Modules.AbpWebCommon().ApiProxyScripting.Generators[JQueryProxyScriptGenerator.Name] = typeof(JQueryProxyScriptGenerator);
 
+            //添加AbpWeb开头的本地化资源配置项
+            Debug.WriteLine("添加AbpWeb开头的本地化资源配置项");
             Configuration.Localization.Sources.Add(
                 new DictionaryBasedLocalizationSource(
                     AbpWebConsts.LocalizaionSourceName,
