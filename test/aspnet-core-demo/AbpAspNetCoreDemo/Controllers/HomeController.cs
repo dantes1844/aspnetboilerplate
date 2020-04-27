@@ -7,6 +7,7 @@ namespace AbpAspNetCoreDemo.Controllers
     {
         public IActionResult Index()
         {
+            var culture = Request.Query["culture"];
             return View();
         }
 

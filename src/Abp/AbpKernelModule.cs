@@ -51,7 +51,7 @@ namespace Abp
             IocManager.Register(typeof(IAmbientScopeProvider<>), typeof(DataContextAmbientScopeProvider<>), DependencyLifeStyle.Transient);
 
             AddAuditingSelectors();
-            AddLocalizationSources();
+            AddLocalizationSources();//加载本地化资源
             AddSettingProviders();
             AddUnitOfWorkFilters();
             ConfigureCaches();
@@ -148,7 +148,7 @@ namespace Abp
 
         private void AddLocalizationSources()
         {
-            //添加Abp开头的本地化资源配置项
+            //添加Abp开头的本地化资源配置项：abp核心模块的本地化资源
             Debug.WriteLine("添加Abp开头的本地化资源配置项");
 
             //要读取本地化资源的程序集

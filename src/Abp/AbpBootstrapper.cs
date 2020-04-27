@@ -123,6 +123,8 @@ namespace Abp
 
                 _moduleManager = IocManager.Resolve<AbpModuleManager>();
                 _moduleManager.Initialize(StartupModule);
+                
+                //在这里执行所有的 PreInitialize,Initialize,PostInitialize
                 _moduleManager.StartModules();
             }
             catch (Exception ex)
