@@ -27,6 +27,7 @@ namespace AbpAspNetCoreDemo.Core
                     )
                 )
             );
+            Configuration.Localization.WrapGivenTextIfNotFound = false;
         }
 
         public override void Initialize()

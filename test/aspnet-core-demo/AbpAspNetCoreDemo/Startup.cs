@@ -32,6 +32,7 @@ namespace AbpAspNetCoreDemo
 
         public Startup(IWebHostEnvironment env)
         {
+            //建造者模式，生成ConfigurationBuilder对象， 将不同的配置文件加入到Configuration实例中
             _env = env;
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -46,6 +47,7 @@ namespace AbpAspNetCoreDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            //读取所有的配置项后，将其设置为单例的依赖注入。方便其他页面使用
             services.AddSingleton(Configuration);
 
             //Some test classes
