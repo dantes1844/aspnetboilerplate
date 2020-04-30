@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using Abp.Application.Services;
 using Abp.AspNetCore;
 using Abp.Localization;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
@@ -20,7 +22,8 @@ namespace AbpAspNetCoreDemo.Controllers
             _otherConfiguration = otherConfiguration;
         }
 
-        public IActionResult Index()
+        [RemoteService(IsEnabled = false)]
+        public IActionResult Index([NotNull]string username)
         {
             //第一个参数是source的名字，也就是各个模块注入的时候指定的名称。当该值没找到时，会报错
             //第二个参数是要找的资源名称，也就是资源文件中配置的键，当该值没找到时，会返回[参数名]，这个括号是可以配置的
@@ -33,6 +36,7 @@ namespace AbpAspNetCoreDemo.Controllers
             var configurationConnectionString = _configuration.GetConnectionString("Default");
             var defaultConnectionString = _otherConfiguration.GetConnectionString("Default");
             var culture = Request.Query["culture"];
+            _configuration.Reload();
             return View();
         }
 

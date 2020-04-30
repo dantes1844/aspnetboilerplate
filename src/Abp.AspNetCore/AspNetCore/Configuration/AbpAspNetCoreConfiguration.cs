@@ -52,8 +52,8 @@ namespace Abp.AspNetCore.Configuration
             bool useConventionalHttpVerbs = true)
         {
             var setting = new AbpControllerAssemblySetting(moduleName, assembly, useConventionalHttpVerbs);
-            ControllerAssemblySettings.Add(setting);
-            return new AbpControllerAssemblySettingBuilder(setting);
+            ControllerAssemblySettings.Add(setting);//这一行是这个方法的主要目的
+            return new AbpControllerAssemblySettingBuilder(setting);//这个返回值貌似没有用上？todo 2020年4月30日 15:57:34
         }
     }
 }

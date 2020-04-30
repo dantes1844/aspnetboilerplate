@@ -35,10 +35,10 @@ namespace AbpAspNetCoreDemo
         {
             RegisterDbContextToSqliteInMemoryDb(IocManager);
 
-            Configuration.Modules.AbpAspNetCore()
-                .CreateControllersForAppServices(
-                    typeof(AbpAspNetCoreDemoCoreModule).GetAssembly()
-                );
+            var assembly = typeof(AbpAspNetCoreDemoCoreModule).GetAssembly();
+            var abpAspNetCore = Configuration.Modules.AbpAspNetCore();
+            //为AppService创建控制器，方法的返回值没有用处，方法中间的那个添加配置是核心
+            abpAspNetCore.CreateControllersForAppServices(assembly);
 
 
             Configuration.IocManager.Resolve<IAbpAspNetCoreConfiguration>().EndpointConfiguration.Add(endpoints =>

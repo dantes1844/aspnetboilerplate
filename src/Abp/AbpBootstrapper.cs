@@ -51,8 +51,11 @@ namespace Abp
         /// </summary>
         /// <param name="startupModule">Startup module of the application which depends on other used modules. Should be derived from <see cref="AbpModule"/>.</param>
         /// <param name="optionsAction">An action to set options</param>
+        /// 参数里的[NotNull]标签是ReSharper提供的，其目的是为了ReSharper的智能提示用的，并没有实际做出判断。
+        /// 还有其他中类似的，如[ItemNotNull]，[CanBeNull]等
         private AbpBootstrapper([NotNull] Type startupModule, [CanBeNull] Action<AbpBootstrapperOptions> optionsAction = null)
         {
+            //这里是校验参数的null的
             Check.NotNull(startupModule, nameof(startupModule));
 
             var options = new AbpBootstrapperOptions();
@@ -122,9 +125,11 @@ namespace Abp
                 IocManager.Resolve<AbpStartupConfiguration>().Initialize();
 
                 _moduleManager = IocManager.Resolve<AbpModuleManager>();
+
+                //在这里执行模块管理的 Initialize，里面实现的内容主要是加载所有的模块
                 _moduleManager.Initialize(StartupModule);
                 
-                //在这里执行所有的 PreInitialize,Initialize,PostInitialize
+                //在这里执行除模块管理器本身的所有的模块的 PreInitialize,Initialize,PostInitialize
                 _moduleManager.StartModules();
             }
             catch (Exception ex)

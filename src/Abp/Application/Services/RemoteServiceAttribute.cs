@@ -14,7 +14,7 @@ namespace Abp.Application.Services
         public bool IsEnabled { get; set; }
 
         /// <summary>
-        /// Default: true.
+        /// 是否启用元数据，默认值：是
         /// </summary>
         public bool IsMetadataEnabled { get; set; }
 
@@ -24,26 +24,54 @@ namespace Abp.Application.Services
             IsMetadataEnabled = true;
         }
 
+        /// <summary>
+        /// 是对对某个类有效，默认值：是
+        /// 虚方法，可能有子类重写
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public virtual bool IsEnabledFor(Type type)
         {
             return IsEnabled;
         }
 
+        /// <summary>
+        /// 是否对某个方法有效，默认值：是
+        /// 虚方法，可能有子类重写
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
         public virtual bool IsEnabledFor(MethodInfo method)
         {
             return IsEnabled;
         }
 
+        /// <summary>
+        /// 元数据是否对某个类启用，默认值：是
+        /// 虚方法，可能有子类重写
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public virtual bool IsMetadataEnabledFor(Type type)
         {
             return IsMetadataEnabled;
         }
-
+        /// <summary>
+        /// 元数据是否对某个方法启用，默认值：是
+        /// 虚方法，可能有子类重写
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public virtual bool IsMetadataEnabledFor(MethodInfo method)
         {
             return IsMetadataEnabled;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static bool IsExplicitlyEnabledFor(Type type)
         {
             var remoteServiceAttr = type.GetTypeInfo().GetSingleAttributeOrNull<RemoteServiceAttribute>();

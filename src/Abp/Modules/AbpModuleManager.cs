@@ -36,6 +36,7 @@ namespace Abp.Modules
 
         public virtual void Initialize(Type startupModule)
         {
+            //实例化模块列表，传入的参数是整个项目的启动模块
             _modules = new AbpModuleCollection(startupModule);
             LoadAllModules();
         }
@@ -71,7 +72,9 @@ namespace Abp.Modules
             RegisterModules(moduleTypes);
             CreateModules(moduleTypes, plugInModuleTypes);
 
+            //确保AbpKernelModule模块是系统加载的第一个模块，如果不是移动到第一个
             _modules.EnsureKernelModuleToBeFirst();
+            //确定StartUpModule是最后一个模块，如果不是，移动到最后一个
             _modules.EnsureStartupModuleToBeLast();
 
             SetDependencies();

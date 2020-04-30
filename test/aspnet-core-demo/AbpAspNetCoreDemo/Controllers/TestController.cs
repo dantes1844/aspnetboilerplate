@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AbpAspNetCoreDemo.Controllers
 {
+    [Route("api/services/app/test")]
+    [ApiExplorerSettings(IgnoreApi = false)]
     public class TestController : DemoControllerBase
     {
         public IActionResult Index()

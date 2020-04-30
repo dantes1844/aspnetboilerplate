@@ -53,20 +53,26 @@ namespace Abp.AspNetCore
             ConfigureAntiforgery();
         }
 
+        /// <summary>
+        /// 这个方法就是将服务类转成控制器的
+        /// </summary>
         private void AddApplicationParts()
         {
             var configuration = IocManager.Resolve<AbpAspNetCoreConfiguration>();
-            var partManager = IocManager.Resolve<ApplicationPartManager>();
+            var partManager = IocManager.Resolve<ApplicationPartManager>();//微软的库，动态的添加视图和控制器
             var moduleManager = IocManager.Resolve<IAbpModuleManager>();
 
+            //当前程序集加入的目的是什么？ todo 2020年4月30日 16:08:10
             partManager.AddApplicationPartsIfNotAddedBefore(typeof(AbpAspNetCoreModule).Assembly);
 
+            //这里就是将服务类转换为控制器的过程
             var controllerAssemblies = configuration.ControllerAssemblySettings.Select(s => s.Assembly).Distinct();
             foreach (var controllerAssembly in controllerAssemblies)
             {
                 partManager.AddApplicationPartsIfNotAddedBefore(controllerAssembly);
             }
 
+            //插件管理：将插件的内容也增加到视图、控制器中
             var plugInAssemblies = moduleManager.Modules.Where(m => m.IsLoadedAsPlugIn).Select(m => m.Assembly).Distinct();
             foreach (var plugInAssembly in plugInAssemblies)
             {

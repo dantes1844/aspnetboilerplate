@@ -5,6 +5,9 @@ using Abp.Web.Api.Modeling;
 
 namespace Abp.Web.Api.ProxyScripting.Generators.JQuery
 {
+    /// <summary>
+    /// note: 这个类是用来生成全部api方法的
+    /// </summary>
     public class JQueryProxyScriptGenerator : IProxyScriptGenerator, ITransientDependency
     {
         /// <summary>

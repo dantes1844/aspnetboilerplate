@@ -7,7 +7,7 @@ namespace Abp.AspNetCore.Configuration
     public class AbpControllerAssemblySetting
     {
         /// <summary>
-        /// "app".
+        /// 默认的service模块名称："app".
         /// </summary>
         public const string DefaultServiceModuleName = "app";
 

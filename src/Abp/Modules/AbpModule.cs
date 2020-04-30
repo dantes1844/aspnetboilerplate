@@ -103,9 +103,12 @@ namespace Abp.Modules
 
             var list = new List<Type>();
 
-            if (moduleType.GetTypeInfo().IsDefined(typeof(DependsOnAttribute), true))
+            var dependOnAttribute = typeof(DependsOnAttribute);
+
+            if (moduleType.GetTypeInfo().IsDefined(dependOnAttribute, true))
             {
-                var dependsOnAttributes = moduleType.GetTypeInfo().GetCustomAttributes(typeof(DependsOnAttribute), true).Cast<DependsOnAttribute>();
+                //获取当前模块依赖的模块
+                var dependsOnAttributes = moduleType.GetTypeInfo().GetCustomAttributes(dependOnAttribute, true).Cast<DependsOnAttribute>();
                 foreach (var dependsOnAttribute in dependsOnAttributes)
                 {
                     foreach (var dependedModuleType in dependsOnAttribute.DependedModuleTypes)

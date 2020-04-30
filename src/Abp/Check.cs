@@ -10,7 +10,7 @@ namespace Abp
     [DebuggerStepThrough]
     public static class Check
     {
-        [ContractAnnotation("value:null => halt")]
+        //[ContractAnnotation("value:null => halt")]
         public static T NotNull<T>(T value, [InvokerParameterName] [NotNull] string parameterName)
         {
             if (value == null)
