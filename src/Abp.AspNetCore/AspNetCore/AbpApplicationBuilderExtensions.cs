@@ -30,7 +30,7 @@ namespace Abp.AspNetCore
         public static void UseAbp([NotNull] this IApplicationBuilder app, Action<AbpApplicationBuilderOptions> optionsAction)
         {
             Check.NotNull(app, nameof(app));
-
+            
             var options = new AbpApplicationBuilderOptions();
             optionsAction?.Invoke(options);
 

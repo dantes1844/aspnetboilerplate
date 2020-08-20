@@ -35,7 +35,7 @@ namespace AbpAspNetCoreDemo
             //建造者模式，生成ConfigurationBuilder对象， 将不同的配置文件加入到Configuration实例中
             _env = env;
             var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
+                .SetBasePath(env.ContentRootPath)//设置文件的根目录
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
@@ -50,15 +50,19 @@ namespace AbpAspNetCoreDemo
             //读取所有的配置项后，将其设置为单例的依赖注入。方便其他页面使用
             services.AddSingleton(Configuration);
 
-            //Some test classes
-            services.AddTransient<MyTransientClass1>();
-            services.AddTransient<MyTransientClass2>();
-            services.AddScoped<MyScopedClass>();
+            #region 测试注入的，无用
+            
+            ////Some test classes
+            //services.AddTransient<MyTransientClass1>();
+            //services.AddTransient<MyTransientClass2>();
+            //services.AddScoped<MyScopedClass>(); 
+
+            #endregion
 
             //Add framework services
             services.AddMvc(options =>
             {
-                options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());
+                options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());//添加自动表单防伪
             }).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new AbpMvcContractResolver(IocManager.Value)
@@ -67,6 +71,8 @@ namespace AbpAspNetCoreDemo
                 };
             });
 
+            #region OData，官方调用注释
+            
             // Waiting for OData .NET Core 3.0 support, see https://github.com/OData/WebApi/issues/1748
             // services.AddOData();
 
@@ -83,7 +89,9 @@ namespace AbpAspNetCoreDemo
             //    {
             //        inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
             //    }
-            //});
+            //}); 
+
+            #endregion
 
             //Configure Abp and Dependency Injection. Should be called last.
             return services.AddAbp<AbpAspNetCoreDemoModule>(options =>
@@ -125,6 +133,8 @@ namespace AbpAspNetCoreDemo
         {
             app.UseAbp(); //Initializes ABP framework. Should be called first.
 
+            #region OData，官方调用注释
+
             // Waiting for OData .NET Core 3.0 support, see https://github.com/OData/WebApi/issues/1748
             // app.UseOData(builder =>
             // {
@@ -135,7 +145,9 @@ namespace AbpAspNetCoreDemo
             //app.UseUnitOfWork(options =>
             //{
             //    options.Filter = httpContext => httpContext.Request.Path.Value.StartsWith("/odata");
-            //});
+            //}); 
+
+            #endregion
 
             if (env.IsDevelopment())
             {

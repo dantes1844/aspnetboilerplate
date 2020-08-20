@@ -40,6 +40,7 @@ namespace Abp.AspNetCore.Mvc.Antiforgery
                 throw new ArgumentNullException(nameof(context));
             }
 
+            //有其他优先级更高的过滤器则不执行当前这个
             if (!context.IsEffectivePolicy<IAntiforgeryPolicy>(this))
             {
                 _logger.Info("Skipping the execution of current filter as its not the most effective filter implementing the policy " + typeof(IAntiforgeryPolicy));
@@ -50,6 +51,8 @@ namespace Abp.AspNetCore.Mvc.Antiforgery
             {
                 try
                 {
+                    //asp.net core里是由运行时自己调用这个方法来确定防伪是否被篡改。
+                    //mvc5里是根据传入的参数进行判断，在Abp.Web.MVC项目里
                     await _antiforgery.ValidateRequestAsync(context.HttpContext);
                 }
                 catch (AntiforgeryValidationException exception)

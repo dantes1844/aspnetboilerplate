@@ -28,6 +28,13 @@ namespace Abp.AspNetCore.Mvc.Antiforgery
             _antiforgeryOptions = antiforgeryOptions.Value;
         }
 
+        /// <summary>
+        /// 检查是否需要校验AntiForgery
+        /// <para>有登陆信息时必须校验</para>
+        /// <para>往服务器提交数据的必须校验</para>
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         protected override bool ShouldValidate(AuthorizationFilterContext context)
         {
             if (!ShouldValidateInternal(context))
@@ -35,6 +42,7 @@ namespace Abp.AspNetCore.Mvc.Antiforgery
                 return false;
             }
 
+            //_antiForgeryConfiguration.AuthorizationCookieName=".AspNet.ApplicationCookie"
             var cookieAuthenticationOptions = _namedOptionsAccessor.Get(_antiForgeryConfiguration.AuthorizationCookieName);
 
             //Always perform antiforgery validation when request contains authentication cookie
@@ -56,6 +64,11 @@ namespace Abp.AspNetCore.Mvc.Antiforgery
             return true;
         }
 
+        /// <summary>
+        /// 往服务器提交数据(POST,PUT)需要校验
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         private static bool ShouldValidateInternal(AuthorizationFilterContext context)
         {
             if (context == null)

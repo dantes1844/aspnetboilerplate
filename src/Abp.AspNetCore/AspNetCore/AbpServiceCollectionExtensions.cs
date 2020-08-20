@@ -107,7 +107,13 @@ namespace Abp.AspNetCore
 
             services.AddHttpClient(AspNetCoreWebhookSender.WebhookSenderHttpClientName);
         }
-
+        /// <summary>
+        ///创建一个单例的AbpBootstrapper，注入后返回
+        /// </summary>
+        /// <typeparam name="TStartupModule"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="optionsAction"></param>
+        /// <returns></returns>
         private static AbpBootstrapper AddAbpBootstrapper<TStartupModule>(IServiceCollection services, Action<AbpBootstrapperOptions> optionsAction)
             where TStartupModule : AbpModule
         {

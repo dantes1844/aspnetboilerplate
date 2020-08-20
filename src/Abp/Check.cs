@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace Abp
 {
-    [DebuggerStepThrough]
+    [DebuggerStepThrough] //这里不让调试进入
     public static class Check
     {
         //[ContractAnnotation("value:null => halt")]
