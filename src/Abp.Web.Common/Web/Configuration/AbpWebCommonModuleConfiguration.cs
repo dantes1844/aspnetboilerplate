@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Abp.Web.Api.ProxyScripting.Configuration;
 using Abp.Web.MultiTenancy;
 using Abp.Web.Security.AntiForgery;
@@ -23,6 +24,7 @@ namespace Abp.Web.Configuration
             IWebEmbeddedResourcesConfiguration embeddedResources, 
             IWebMultiTenancyConfiguration multiTenancy)
         {
+            AbpDebug.WriteLine($"执行了{nameof(AbpWebCommonModuleConfiguration)}的构造函数");
             ApiProxyScripting = apiProxyScripting;
             AntiForgery = abpAntiForgery;
             EmbeddedResources = embeddedResources;

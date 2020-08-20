@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Abp;
 using Abp.AutoMapper;
 using Abp.Localization;
 using Abp.Localization.Dictionaries;
@@ -18,7 +19,7 @@ namespace AbpAspNetCoreDemo.Core
             Configuration.Localization.Languages.Add(new LanguageInfo("en", "English", isDefault: true));
             Configuration.Localization.Languages.Add(new LanguageInfo("tr", "Türkçe"));
 
-            Debug.WriteLine($"{nameof(AbpAspNetCoreDemoCoreModule)}添加AbpAspNetCoreDemoModule的本地化资源配置项");
+            AbpDebug.WriteLine($"{nameof(AbpAspNetCoreDemoCoreModule)}添加AbpAspNetCoreDemoModule的本地化资源配置项");
             Configuration.Localization.Sources.Add(
                 new DictionaryBasedLocalizationSource("AbpAspNetCoreDemoModule",
                     new JsonEmbeddedFileLocalizationDictionaryProvider(

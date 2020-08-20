@@ -12,6 +12,11 @@ namespace Abp.AspNetCore.Security
             _next = next;
         }
 
+        /// <summary>
+        /// 中间件必须包含一个Invoke方法，且第一个参数必须是HttpContext类型
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <returns></returns>
         public async Task Invoke(HttpContext httpContext)
         {
             /*

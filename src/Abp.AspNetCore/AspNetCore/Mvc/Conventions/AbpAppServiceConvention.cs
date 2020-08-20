@@ -45,7 +45,7 @@ namespace Abp.AspNetCore.Mvc.Conventions
         public void Apply(ApplicationModel application)
         {
             //这里已经拿到了所有的控制器信息，包括web层和service层的。要查看此前是怎么将service转成控制器的
-            Debug.WriteLine($"全部的控制器信息：{application.Controllers.Select(c => c.ControllerName).JoinAsString(" \r\n ")}");
+            AbpDebug.WriteLine($"全部的控制器信息：{application.Controllers.Select(c => c.ControllerName).JoinAsString(" \r\n ")}");
             foreach (var controller in application.Controllers)
             {
                 var tempName = controller.ControllerName;
@@ -57,7 +57,7 @@ namespace Abp.AspNetCore.Mvc.Conventions
                 {
                     //移除类名的后缀："AppService", "ApplicationService" 
                     controller.ControllerName = controller.ControllerName.RemovePostFix(ApplicationService.CommonPostfixes);
-                    Debug.WriteLine($"controller.ControllerName={controller.ControllerName},configuration.ModuleName:{configuration?.ModuleName}");
+                    AbpDebug.WriteLine($"controller.ControllerName={controller.ControllerName},configuration.ModuleName:{configuration?.ModuleName}");
                     configuration?.ControllerModelConfigurer(controller);
 
                     //把service生成的api模块配置成area，本身的控制器视图页已经有了area的路由配置，无需处理

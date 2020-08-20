@@ -84,7 +84,10 @@ namespace Abp.AspNetCore
         {
             IocManager.Using<IOptions<AntiforgeryOptions>>(optionsAccessor =>
             {
-                optionsAccessor.Value.HeaderName = Configuration.Modules.AbpWebCommon().AntiForgery.TokenHeaderName;
+                var modules = Configuration.Modules;
+                var webCommon = modules.AbpWebCommon();
+                var antiForgery = webCommon.AntiForgery;
+                optionsAccessor.Value.HeaderName = "Laobai";// antiForgery.TokenHeaderName;
             });
         }
     }

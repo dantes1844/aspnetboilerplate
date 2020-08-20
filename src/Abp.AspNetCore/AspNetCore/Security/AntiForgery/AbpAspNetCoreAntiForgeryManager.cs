@@ -21,6 +21,10 @@ namespace Abp.AspNetCore.Security.AntiForgery
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        /// 生成防伪标记
+        /// </summary>
+        /// <returns></returns>
         public string GenerateToken()
         {
             return _antiforgery.GetAndStoreTokens(_httpContextAccessor.HttpContext).RequestToken;

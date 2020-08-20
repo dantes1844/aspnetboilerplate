@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Abp;
 using Abp.Application.Services;
 using Abp.AspNetCore;
 using Abp.Localization;
@@ -32,7 +33,7 @@ namespace AbpAspNetCoreDemo.Controllers
             var teststring1 = LocalizationManager.GetString(LocalizationSourceName, "MainMenu1");//本处返回的就是[Main Menu1]
             var teststring2 = LocalizationManager.GetString(LocalizationSourceName, "中文变量");//本处返回的就是[中文变量]
             var testString3 = L("zhongwen");
-            Debug.WriteLine($"testString={teststring},testString1={teststring1},testString2={teststring2},testString3={testString3}");
+            AbpDebug.WriteLine($"testString={teststring},testString1={teststring1},testString2={teststring2},testString3={testString3}");
             var configurationConnectionString = _configuration.GetConnectionString("Default");
             var defaultConnectionString = _otherConfiguration.GetConnectionString("Default");
             var culture = Request.Query["culture"];

@@ -39,7 +39,7 @@ namespace Abp.Zero
             Configuration.Settings.Providers.Add<AbpZeroSettingProvider>();
 
             //添加AbpZero开头的本地化资源配置项
-            // Debug.WriteLine("添加AbpZero开头的本地化资源配置项");
+            // AbpDebug.WriteLine("添加AbpZero开头的本地化资源配置项");
             Configuration.Localization.Sources.Add(
                 new DictionaryBasedLocalizationSource(
                     AbpZeroConsts.LocalizationSourceName,
