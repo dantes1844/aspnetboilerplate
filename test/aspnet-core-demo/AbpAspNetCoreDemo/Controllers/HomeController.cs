@@ -26,8 +26,11 @@ namespace AbpAspNetCoreDemo.Controllers
             _otherConfiguration = otherConfiguration;
         }
 
-        //Startup里已经全局注册了这个，再添加会报错
-        //[ServiceFilter(typeof(AutoAddHeaderActionFilterAttribute))]
+        //Startup里已经全局注册了这个，再添加会报错（相同名称的头部已经添加了）
+        //这个必须在服务里注册，否则会报错
+        //ComponentNotFoundException: No component for supporting the service AbpAspNetCoreDemo.Laobai.GlobalRegisteredActionFilterAttribute was found
+        //[ServiceFilter(typeof(GlobalRegisteredActionFilterAttribute))] 
+        [TypeFilter(typeof(GlobalRegisteredActionFilterAttribute), Arguments = new object[] {  })]//使用TypeFilter时，不注册也不会报上面这个错误。还可以往构造函数里传入参数
         [SurroundClassActionFilter(nameof(Index))]
         [RemoteService(IsEnabled = false)]
         public IActionResult Index([NotNull]string username)

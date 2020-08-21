@@ -18,12 +18,16 @@ namespace AbpAspNetCoreDemo.Laobai
             Order = 1;
         }
 
-        public override void OnResultExecuting(ResultExecutingContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
-            AbpDebug.WriteLine($"执行了{nameof(GlobalRegisteredActionFilterAttribute)},{_settings.Name}");
-            context.HttpContext.Response.Headers.Add(_settings.Title,
-                new string[] { _settings.Name });
-            base.OnResultExecuting(context);
+            AbpDebug.WriteLine($"执行了{nameof(GlobalRegisteredActionFilterAttribute)},{nameof(OnActionExecuting)},{_settings.Name}");
+            base.OnActionExecuting(context);
+        }
+
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            AbpDebug.WriteLine($"执行了{nameof(GlobalRegisteredActionFilterAttribute)},{nameof(OnActionExecuted)},{_settings.Name}");
+            base.OnActionExecuted(context);
         }
     }
     public class SurroundClassActionFilterAttribute : ActionFilterAttribute
@@ -36,12 +40,34 @@ namespace AbpAspNetCoreDemo.Laobai
             Order = 1;
         }
 
-        public override void OnResultExecuting(ResultExecutingContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
-            AbpDebug.WriteLine($"执行了{nameof(SurroundClassActionFilterAttribute)},{_name}");
+            AbpDebug.WriteLine($"执行了{nameof(SurroundClassActionFilterAttribute)},{nameof(OnActionExecuting)},{_name}");
             context.HttpContext.Response.Headers.Add(_name,
                 new string[] { _name });
+            base.OnActionExecuting(context);
+        }
+
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            AbpDebug.WriteLine($"执行了{nameof(SurroundClassActionFilterAttribute)},{nameof(OnActionExecuted)},{_name}");
+            base.OnActionExecuted(context);
+        }
+    }
+
+    public class LaobaiResultActionFilter : ResultFilterAttribute
+    {
+        public override void OnResultExecuting(ResultExecutingContext context)
+        {
+            AbpDebug.WriteLine($"执行了{nameof(LaobaiResultActionFilter)},{nameof(OnResultExecuting)}");
+            //context.Cancel = true;//设置成true则短路当前操作，后面的返回都是空值
             base.OnResultExecuting(context);
+        }
+
+        public override void OnResultExecuted(ResultExecutedContext context)
+        {
+            AbpDebug.WriteLine($"执行了{nameof(LaobaiResultActionFilter)},{nameof(OnResultExecuted)}");
+            base.OnResultExecuted(context);
         }
     }
 }

@@ -56,7 +56,7 @@ namespace AbpAspNetCoreDemo
             #region 测试filter的 2020年8月21日
 
             services.Configure<PositionOptions>(Configuration.GetSection("Position"));
-            services.AddScoped<GlobalRegisteredActionFilterAttribute>();
+            //services.AddScoped<GlobalRegisteredActionFilterAttribute>();//配合ServiceFilter的，不注册的话，FilterService会报错
 
             #endregion
 
@@ -73,10 +73,11 @@ namespace AbpAspNetCoreDemo
             services.AddMvc(options =>
             {
                 //添加自动表单防伪，由ASP.Net Core的过滤器机制来实现
-                options.Filters.Add(typeof(AbpAutoValidateAntiforgeryTokenAttribute));
+                options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());//实例方法注入Filter，所有的请求公用这个Filter变量
 
-                //这里可以全局注册过滤器：对所有的控制器和action起作用，所以这时候在控制器上再加有可能会出现错误。Header里不允许添加重复的键
-                options.Filters.Add(typeof(GlobalRegisteredActionFilterAttribute));
+                ////这里可以全局注册过滤器：对所有的控制器和action起作用，所以这时候在控制器上再加有可能会出现错误。Header里不允许添加重复的键
+                options.Filters.Add(typeof(GlobalRegisteredActionFilterAttribute));//类注入Filter，将会激活类，所有的构造函数注入的Filter都将实例化
+                options.Filters.Add(typeof(LaobaiResultActionFilter));
             }).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new AbpMvcContractResolver(IocManager.Value)
