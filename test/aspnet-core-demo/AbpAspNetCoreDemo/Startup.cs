@@ -28,6 +28,8 @@ namespace AbpAspNetCoreDemo
     {
         private readonly IWebHostEnvironment _env;
 
+        //https://docs.microsoft.com/en-us/dotnet/api/system.threading.asynclocal-1?view=netcore-3.1
+        //AsyncLocal<T> 实例可以用来跨线程存储数据，因为容易本身需要全局公用
         public static readonly AsyncLocal<IocManager> IocManager = new AsyncLocal<IocManager>();
 
         public Startup(IWebHostEnvironment env)
@@ -51,7 +53,7 @@ namespace AbpAspNetCoreDemo
             services.AddSingleton(Configuration);
 
             #region 测试注入的，无用
-            
+
             ////Some test classes
             //services.AddTransient<MyTransientClass1>();
             //services.AddTransient<MyTransientClass2>();
@@ -62,17 +64,19 @@ namespace AbpAspNetCoreDemo
             //Add framework services
             services.AddMvc(options =>
             {
-                options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());//添加自动表单防伪
+                //添加自动表单防伪，由ASP.Net Core的过滤器机制来实现
+                options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());
             }).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new AbpMvcContractResolver(IocManager.Value)
                 {
+                    //策略模式，使用不同的方法转化json的格式，这里使用的是驼峰法
                     NamingStrategy = new CamelCaseNamingStrategy()
                 };
             });
 
             #region OData，官方调用注释
-            
+
             // Waiting for OData .NET Core 3.0 support, see https://github.com/OData/WebApi/issues/1748
             // services.AddOData();
 

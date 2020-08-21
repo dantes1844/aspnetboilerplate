@@ -33,6 +33,11 @@ namespace Abp.AspNetCore.Mvc.Antiforgery
             _antiForgeryConfiguration = antiForgeryConfiguration;
         }
 
+        /// <summary>
+        /// 这个方法最终在<see cref="Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker"/>中被调用 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             if (context == null)
@@ -58,6 +63,33 @@ namespace Abp.AspNetCore.Mvc.Antiforgery
                 catch (AntiforgeryValidationException exception)
                 {
                     _logger.Error(exception.Message, exception);
+                    //给Result赋值，ResourceInvoker会短路当前所有过滤器，直接返回结果
+                    /*
+                     
+                    case State.AuthorizationAsyncEnd:
+                    {
+                        Debug.Assert(state != null);
+                        Debug.Assert(_authorizationContext != null);
+
+                        var filter = (IAsyncAuthorizationFilter)state;
+                        var authorizationContext = _authorizationContext;
+
+                        _diagnosticListener.AfterOnAuthorizationAsync(authorizationContext, filter);
+                        _logger.AfterExecutingMethodOnFilter(
+                            FilterTypeConstants.AuthorizationFilter,
+                            nameof(IAsyncAuthorizationFilter.OnAuthorizationAsync),
+                            filter);
+
+                        if (authorizationContext.Result != null)
+                        {
+                            goto case State.AuthorizationShortCircuit;
+                        }
+
+                        goto case State.AuthorizationNext;
+                    }
+                     *
+                     *
+                     */
                     context.Result = new AntiforgeryValidationFailedResult();
                 }
             }

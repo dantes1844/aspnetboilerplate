@@ -28,6 +28,8 @@ namespace Abp.AspNetCore.Mvc.Antiforgery
         /// <inheritdoc />
         public bool IsReusable => true;
 
+
+        ///IFilterFactory接口的方法，供MVC Core框架调用
         /// <inheritdoc />
         public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
         {
