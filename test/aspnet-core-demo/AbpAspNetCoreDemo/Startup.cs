@@ -11,6 +11,7 @@ using Abp.Dependency;
 using Abp.Json;
 using Abp.PlugIns;
 using AbpAspNetCoreDemo.Controllers;
+using AbpAspNetCoreDemo.Laobai;
 using Castle.Core.Logging;
 using Castle.Facilities.Logging;
 using Castle.MicroKernel.ModelBuilder.Inspectors;
@@ -52,6 +53,13 @@ namespace AbpAspNetCoreDemo
             //读取所有的配置项后，将其设置为单例的依赖注入。方便其他页面使用
             services.AddSingleton(Configuration);
 
+            #region 测试filter的 2020年8月21日
+
+            services.Configure<PositionOptions>(Configuration.GetSection("Position"));
+            services.AddScoped<GlobalRegisteredActionFilterAttribute>();
+
+            #endregion
+
             #region 测试注入的，无用
 
             ////Some test classes
@@ -65,7 +73,10 @@ namespace AbpAspNetCoreDemo
             services.AddMvc(options =>
             {
                 //添加自动表单防伪，由ASP.Net Core的过滤器机制来实现
-                options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());
+                options.Filters.Add(typeof(AbpAutoValidateAntiforgeryTokenAttribute));
+
+                //这里可以全局注册过滤器：对所有的控制器和action起作用，所以这时候在控制器上再加有可能会出现错误。Header里不允许添加重复的键
+                options.Filters.Add(typeof(GlobalRegisteredActionFilterAttribute));
             }).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new AbpMvcContractResolver(IocManager.Value)

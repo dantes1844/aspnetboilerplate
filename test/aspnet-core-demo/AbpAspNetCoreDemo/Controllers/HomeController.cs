@@ -3,12 +3,15 @@ using Abp;
 using Abp.Application.Services;
 using Abp.AspNetCore;
 using Abp.Localization;
+using AbpAspNetCoreDemo.Laobai;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 
 namespace AbpAspNetCoreDemo.Controllers
 {
+    [SurroundClassActionFilter(nameof(HomeController))]
     public class HomeController : DemoControllerBase
     {
         //IConfigurationSource、IConfigurationProvider、IConfigurationBuilder、IConfiguration
@@ -23,6 +26,9 @@ namespace AbpAspNetCoreDemo.Controllers
             _otherConfiguration = otherConfiguration;
         }
 
+        //Startup里已经全局注册了这个，再添加会报错
+        //[ServiceFilter(typeof(AutoAddHeaderActionFilterAttribute))]
+        [SurroundClassActionFilter(nameof(Index))]
         [RemoteService(IsEnabled = false)]
         public IActionResult Index([NotNull]string username)
         {
@@ -39,6 +45,18 @@ namespace AbpAspNetCoreDemo.Controllers
             var culture = Request.Query["culture"];
             _configuration.Reload();
             return View();
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            AbpDebug.WriteLine($"{nameof(HomeController)}.{nameof(OnActionExecuting)} Executed");
+            base.OnActionExecuting(context);
+        }
+
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            AbpDebug.WriteLine($"{nameof(HomeController)}.{nameof(OnActionExecuted)} Executed");
+            base.OnActionExecuted(context);
         }
 
         public IActionResult About()
