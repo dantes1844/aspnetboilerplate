@@ -90,7 +90,7 @@ namespace Abp.AspNetCore
             //Configure MVC
             services.Configure<MvcOptions>(mvcOptions =>
             {
-                mvcOptions.AddAbp(services);
+                mvcOptions.AddAbp(services);//增加默认的几个过滤器，包括权限验证，异常处理，UOW等
             });
 
             //Configure Razor

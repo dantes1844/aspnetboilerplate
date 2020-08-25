@@ -23,6 +23,7 @@ namespace Abp.AspNetCore.Mvc
 
         private static void AddConventions(MvcOptions options, IServiceCollection services)
         {
+            //服务转成接口的约定
             options.Conventions.Add(new AbpAppServiceConvention(services));
         }
 
@@ -31,7 +32,7 @@ namespace Abp.AspNetCore.Mvc
             options.Filters.AddService(typeof(AbpAuthorizationFilter));
             options.Filters.AddService(typeof(AbpAuditActionFilter));
             options.Filters.AddService(typeof(AbpValidationActionFilter));
-            options.Filters.AddService(typeof(AbpUowActionFilter));
+            options.Filters.AddService(typeof(AbpUowActionFilter));//全局添加UOW过滤器
             options.Filters.AddService(typeof(AbpExceptionFilter));
             options.Filters.AddService(typeof(AbpResultFilter));
         }

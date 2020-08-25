@@ -35,14 +35,18 @@ namespace Abp.AspNetCore.Mvc.Uow
                 .GetUnitOfWorkAttributeOrNull(context.ActionDescriptor.GetMethodInfo()) ??
                 _aspnetCoreConfiguration.DefaultUnitOfWorkAttribute;
 
+
+            //未启用UOW的直接调用action，否则用UOW实例将action包裹
             if (unitOfWorkAttr.IsDisabled)
             {
                 await next();
                 return;
             }
 
+            //自动将UOW特性解析成工作单元模块
             using (var uow = _unitOfWorkManager.Begin(unitOfWorkAttr.CreateOptions()))
             {
+                //2020年8月25日 疑问是：这里只有一个action，它要工作单元有什么用处？？
                 var result = await next();
                 if (result.Exception == null || result.ExceptionHandled)
                 {
