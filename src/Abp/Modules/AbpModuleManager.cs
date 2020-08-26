@@ -129,7 +129,7 @@ namespace Abp.Modules
         {
             foreach (var moduleType in moduleTypes)
             {
-                _iocManager.RegisterIfNot(moduleType);
+                _iocManager.RegisterIfNot(moduleType);//模块本身未注册的，按照单例进行注入。
             }
         }
 

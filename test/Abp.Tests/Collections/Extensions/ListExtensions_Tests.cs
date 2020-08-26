@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Abp.Collections.Extensions;
 using Shouldly;
 using Xunit;
@@ -24,6 +25,25 @@ namespace Abp.Tests.Collections.Extensions
             ShouldSortedCorrectly(new List<DependedObject> { d, c, b, a });
             ShouldSortedCorrectly(new List<DependedObject> { a, c, d, b });
             ShouldSortedCorrectly(new List<DependedObject> { c, a, d, b });
+        }
+
+        [Fact]
+        public void Should_Throw_Cyclic_Exception()
+        {
+            var a = new DependedObject("A");
+            var b = new DependedObject("B");
+            var c = new DependedObject("C");
+
+            b.Dependencies.Add(a);
+            c.Dependencies.Add(b);
+            a.Dependencies.Add(c);
+
+            var dependedObjects = new List<DependedObject>() { a, b, c };
+
+            Assert.Throws<ArgumentException>(() =>
+            {
+                dependedObjects.SortByDependencies(o => o.Dependencies);
+            });
         }
 
         private static void ShouldSortedCorrectly(List<DependedObject> dependedObjects)

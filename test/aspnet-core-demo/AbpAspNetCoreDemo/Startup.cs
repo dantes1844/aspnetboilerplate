@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Abp;
 using Abp.AspNetCore;
 using Abp.AspNetCore.Configuration;
 using Abp.AspNetCore.Mvc.Antiforgery;
@@ -30,7 +32,7 @@ namespace AbpAspNetCoreDemo
         private readonly IWebHostEnvironment _env;
 
         //https://docs.microsoft.com/en-us/dotnet/api/system.threading.asynclocal-1?view=netcore-3.1
-        //AsyncLocal<T> 实例可以用来跨线程存储数据，因为容易本身需要全局公用
+        //AsyncLocal<T> 实例可以用来跨线程存储数据，因为容器本身需要全局公用
         public static readonly AsyncLocal<IocManager> IocManager = new AsyncLocal<IocManager>();
 
         public Startup(IWebHostEnvironment env)
@@ -43,6 +45,8 @@ namespace AbpAspNetCoreDemo
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+            var connStr = Configuration.GetConnectionString("Default");
+            AbpDebug.WriteLine($"connStr={connStr}");
         }
 
         public IConfigurationRoot Configuration { get; }
