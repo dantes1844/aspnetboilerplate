@@ -59,7 +59,7 @@ namespace AbpAspNetCoreDemo.Controllers
             //第一个参数是source的名字，也就是各个模块注入的时候指定的名称。当该值没找到时，会报错
             //第二个参数是要找的资源名称，也就是资源文件中配置的键，当该值没找到时，会返回[参数名]，这个括号是可以配置的
             //Configuration.Localization.WrapGivenTextIfNotFound = false; 如果配置是这样，那么返回的字符就不会有[]
-             var teststring = LocalizationManager.GetString(LocalizationSourceName, "AboutDescription");
+            var teststring = LocalizationManager.GetString(LocalizationSourceName, "AboutDescription");
             var teststring1 = LocalizationManager.GetString(LocalizationSourceName, "MainMenu1");//本处返回的就是[Main Menu1]
             var teststring2 = LocalizationManager.GetString(LocalizationSourceName, "中文变量");//本处返回的就是[中文变量]
             var testString3 = L("zhongwen");
@@ -92,10 +92,9 @@ namespace AbpAspNetCoreDemo.Controllers
 
         public IActionResult ModelBindingCustomClass()
         {
-            if (!YujianName.IsNullOrEmpty())
+            if (CustomModelBindingModel != null)
             {
-                AbpDebug.WriteLine($"Property {nameof(YujianName)}={YujianName}");
-                AbpDebug.WriteLine($"Properties {nameof(Name)}={Name},{nameof(Age)}={Age}");
+                AbpDebug.WriteLine($"IModelBinder {nameof(CustomModelBindingModel.Name)}={CustomModelBindingModel.Name},{nameof(CustomModelBindingModel.Age)}={CustomModelBindingModel.Age}");
             }
 
             return Content("模型自定义类绑定");
