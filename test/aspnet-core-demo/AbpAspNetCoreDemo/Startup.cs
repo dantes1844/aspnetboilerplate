@@ -77,7 +77,7 @@ namespace AbpAspNetCoreDemo
             services.AddMvc(options =>
             {
                 //添加自动表单防伪，由ASP.Net Core的过滤器机制来实现
-                options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());//实例方法注入Filter，所有的请求公用这个Filter变量
+                //options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());//实例方法注入Filter，所有的请求公用这个Filter变量
 
                 ////这里可以全局注册过滤器：对所有的控制器和action起作用，所以这时候在控制器上再加有可能会出现错误。Header里不允许添加重复的键
                 options.Filters.Add(typeof(GlobalRegisteredActionFilterAttribute));//类注入Filter，将会激活类，所有的构造函数注入的Filter都将实例化

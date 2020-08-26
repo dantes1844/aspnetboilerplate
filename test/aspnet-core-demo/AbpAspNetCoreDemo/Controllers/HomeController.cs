@@ -7,6 +7,7 @@ using Abp.Localization;
 using AbpAspNetCoreDemo.Laobai;
 using Castle.Core.Internal;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -98,6 +99,13 @@ namespace AbpAspNetCoreDemo.Controllers
             }
 
             return Content("模型自定义类绑定");
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult ModelBindingFromBody(Person person)
+        {
+            return Content(person.ToString());
         }
 
 
