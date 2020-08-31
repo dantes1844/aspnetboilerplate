@@ -15,6 +15,11 @@ namespace AbpAspNetCoreDemo.Laobai
 
         public int Age { get; set; }
 
+        public override string ToString()
+        {
+            return $"{nameof(Name)}:{Name},{nameof(Age)}:{Age}";
+        }
+
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             var nameValueResult = bindingContext.ValueProvider.GetValue(nameof(Name));

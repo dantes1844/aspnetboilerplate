@@ -10,7 +10,6 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 
 namespace AbpAspNetCoreDemo.Controllers
@@ -19,18 +18,6 @@ namespace AbpAspNetCoreDemo.Controllers
     [BindProperties(SupportsGet = true)]//批量使字段进行绑定
     public class HomeController : DemoControllerBase
     {
-        //[ModelBinder]
-        [BindProperty(SupportsGet = true, Name = "name")]//默认不支持Get请求的绑定，需设置属性。另外这个与ModelBinder的差异还要看一下
-        public string YujianName { get; set; }
-
-        public string Name { get; set; }
-
-        //[BindRequired] //加上这个之后，就要求必须有值了，否则ModelState.IsValid返回false，并且报异常
-        public int Age { get; set; }
-
-        [BindProperty(SupportsGet = true, BinderType = typeof(CustomModelBindingModel))]
-        public CustomModelBindingModel CustomModelBindingModel { get; set; }
-
         //IConfigurationSource、IConfigurationProvider、IConfigurationBuilder、IConfiguration
         //https://blog.csdn.net/wnvalentin/article/details/84956975
         //IConfigurationRoot 继承自 IConfiguration
@@ -72,43 +59,6 @@ namespace AbpAspNetCoreDemo.Controllers
 
             return Content("本地化资源测试");
         }
-
-        public IActionResult ModelBindingValidate()
-        {
-            AbpDebug.WriteLine($"{Name},{Age}, ModelState.IsValid={ModelState.IsValid}");
-
-            return Content("模型校验绑定");
-        }
-
-        public IActionResult ModelBindingProperty()
-        {
-            if (!YujianName.IsNullOrEmpty())
-            {
-                AbpDebug.WriteLine($"Property {nameof(YujianName)}={YujianName}");
-                AbpDebug.WriteLine($"Properties {nameof(Name)}={Name},{nameof(Age)}={Age}");
-            }
-
-            return Content("模型属性绑定");
-        }
-
-        public IActionResult ModelBindingCustomClass()
-        {
-            if (CustomModelBindingModel != null)
-            {
-                AbpDebug.WriteLine($"IModelBinder {nameof(CustomModelBindingModel.Name)}={CustomModelBindingModel.Name},{nameof(CustomModelBindingModel.Age)}={CustomModelBindingModel.Age}");
-            }
-
-            return Content("模型自定义类绑定");
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public IActionResult ModelBindingFromBody(Person person)
-        {
-            return Content(person.ToString());
-        }
-
-
 
         public IActionResult About()
         {
