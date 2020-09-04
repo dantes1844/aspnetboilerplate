@@ -187,7 +187,7 @@ namespace AbpAspNetCoreDemo
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute("defaultWithArea", "{area}/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllerRoute("default", "{controller=ModelBinding}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=TagHelper}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
 
                 app.ApplicationServices.GetRequiredService<IAbpAspNetCoreConfiguration>().EndpointConfiguration.ConfigureAllEndpoints(endpoints);
