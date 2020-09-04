@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Abp;
+﻿using Abp;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 
@@ -44,7 +40,7 @@ namespace AbpAspNetCoreDemo.Laobai
         {
             AbpDebug.WriteLine($"执行了{nameof(SurroundClassActionFilterAttribute)},{nameof(OnActionExecuting)},{_name}");
             context.HttpContext.Response.Headers.Add(_name,
-                new string[] { _name });
+                new[] { _name });
             base.OnActionExecuting(context);
         }
 
