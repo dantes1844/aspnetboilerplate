@@ -955,6 +955,7 @@ namespace Abp.Authorization.Users
 
         public virtual async Task InitializeOptionsAsync(int? tenantId)
         {
+            //Options是Identity对象的配置项
             Options = JsonConvert.DeserializeObject<IdentityOptions>(_optionsAccessor.Value.ToJsonString());
 
             //Lockout

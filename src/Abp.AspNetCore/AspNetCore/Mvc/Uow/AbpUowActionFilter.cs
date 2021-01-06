@@ -25,12 +25,13 @@ namespace Abp.AspNetCore.Mvc.Uow
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            //不是控制器方法，直接调用该方法并返回，无需工作单元
             if (!context.ActionDescriptor.IsControllerAction())
             {
                 await next();
                 return;
             }
-
+            //获取方法或者所属类定义的工作单元，如果没有，给默认的工作单元实例
             var unitOfWorkAttr = _unitOfWorkDefaultOptions
                 .GetUnitOfWorkAttributeOrNull(context.ActionDescriptor.GetMethodInfo()) ??
                 _aspnetCoreConfiguration.DefaultUnitOfWorkAttribute;

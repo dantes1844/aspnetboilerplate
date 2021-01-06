@@ -41,7 +41,7 @@ namespace Abp.AspNetCore
             var abpBootstrapper = AddAbpBootstrapper<TStartupModule>(services, optionsAction);
 
             ConfigureAspNetCore(services, abpBootstrapper.IocManager);
-
+            //将asp.net core的注入内容加入windsor容器中
             return WindsorRegistrationHelper.CreateServiceProvider(abpBootstrapper.IocManager.IocContainer, services);
         }
 

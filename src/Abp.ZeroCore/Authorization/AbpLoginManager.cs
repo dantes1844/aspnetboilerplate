@@ -117,11 +117,20 @@ namespace Abp.Authorization
             }
         }
 
-
+        /// <summary>
+        /// 登陆操作
+        /// </summary>
+        /// <param name="userNameOrEmailAddress"></param>
+        /// <param name="plainPassword"></param>
+        /// <param name="tenancyName"></param>
+        /// <param name="shouldLockout"></param>
+        /// <returns></returns>
         [UnitOfWork]
         public virtual async Task<AbpLoginResult<TTenant, TUser>> LoginAsync(string userNameOrEmailAddress, string plainPassword, string tenancyName = null, bool shouldLockout = true)
         {
+            //检查登陆相关的设置，包括电话激活，用户激活等，登录成功后往http中写入identity
             var result = await LoginAsyncInternal(userNameOrEmailAddress, plainPassword, tenancyName, shouldLockout);
+            //保存登陆信息
             await SaveLoginAttemptAsync(result, tenancyName, userNameOrEmailAddress);
             return result;
         }

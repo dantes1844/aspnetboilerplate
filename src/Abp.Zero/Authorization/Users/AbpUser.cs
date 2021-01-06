@@ -36,6 +36,9 @@ namespace Abp.Authorization.Users
         {
         }
 
+        /// <summary>
+        /// 将用户名和邮箱全部转成大写，目的不知道是啥
+        /// </summary>
         public virtual void SetNormalizedNames()
         {
             NormalizedUserName = UserName.ToUpperInvariant();

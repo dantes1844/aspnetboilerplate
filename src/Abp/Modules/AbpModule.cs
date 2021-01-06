@@ -26,6 +26,7 @@ namespace Abp.Modules
 
         /// <summary>
         /// Gets a reference to the ABP configuration.
+        /// <para>给所有的模块公用的配置项属性，在每个模块里都可以进行配置的设置</para>
         /// </summary>
         protected internal IAbpStartupConfiguration Configuration { get; internal set; }
 

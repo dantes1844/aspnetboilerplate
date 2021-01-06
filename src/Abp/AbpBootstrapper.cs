@@ -119,6 +119,8 @@ namespace Abp
             try
             {
                 RegisterBootstrapper();
+
+                //将配置项的注入加入到容器中
                 IocManager.IocContainer.Install(new AbpCoreInstaller());
 
                 IocManager.Resolve<AbpPlugInManager>().PlugInSources.AddRange(PlugInSources);

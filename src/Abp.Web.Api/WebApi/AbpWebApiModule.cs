@@ -99,7 +99,7 @@ namespace Abp.WebApi
             httpConfiguration.Filters.Add(IocManager.Resolve<AbpApiValidationFilter>());
             httpConfiguration.Filters.Add(IocManager.Resolve<AbpApiUowFilter>());
             httpConfiguration.Filters.Add(IocManager.Resolve<AbpApiExceptionFilterAttribute>());
-
+            //增加返回值的包装处理器
             httpConfiguration.MessageHandlers.Add(IocManager.Resolve<ResultWrapperHandler>());
         }
 

@@ -19,11 +19,12 @@ namespace Abp.Reflection
         {
             var givenTypeInfo = givenType.GetTypeInfo();
 
+            //当前类是目标泛型的直接子类
             if (givenTypeInfo.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
             {
                 return true;
             }
-
+            //当前类实现的接口遍历，判断是否是目标泛型的实现类
             foreach (var interfaceType in givenType.GetInterfaces())
             {
                 if (interfaceType.GetTypeInfo().IsGenericType && interfaceType.GetGenericTypeDefinition() == genericType)
@@ -31,12 +32,12 @@ namespace Abp.Reflection
                     return true;
                 }
             }
-
+            //父类为空，直接false
             if (givenTypeInfo.BaseType == null)
             {
                 return false;
             }
-
+            //递归查找其父类
             return IsAssignableToGenericType(givenTypeInfo.BaseType, genericType);
         }
 

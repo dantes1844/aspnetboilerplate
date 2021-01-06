@@ -16,6 +16,8 @@ namespace Abp.Authorization.Users
 {
     /// <summary>
     /// Implements 'User Store' of ASP.NET Identity Framework.
+    /// <para>这一层基本就是数据库操作了</para>
+    /// <para>实现了若干个接口,包括IUserPermissionStore等</para>
     /// </summary>
     public abstract class AbpUserStore<TRole, TUser> :
         IUserStore<TUser, long>,

@@ -47,16 +47,27 @@ namespace Abp.EntityFrameworkCore.Repositories
         /// </summary>
         public virtual DbSet<TEntity> DbQueryTable => Context.Set<TEntity>();
 
+        /// <summary>
+        /// 键：实体类，值：布尔
+        /// </summary>
+
         private static readonly ConcurrentDictionary<Type, bool> EntityIsDbQuery =
             new ConcurrentDictionary<Type, bool>();
 
         protected virtual IQueryable<TEntity> GetQueryable()
         {
-            if (EntityIsDbQuery.GetOrAdd(typeof(TEntity), key => Context.GetType().GetProperties().Any(property =>
+            //获取当前类的所有public属性，如DbSet<User>等
+            var properties = Context.GetType().GetProperties();
+
+            //查找是否有DbQuery<TEntity>类型的字段，该类型继承自IEntity，且包含至少一个TEntity类型的参数
+            var getConcurrentDictionary = EntityIsDbQuery.GetOrAdd(typeof(TEntity), key => properties.Any(
+                property =>
                     ReflectionHelper.IsAssignableToGenericType(property.PropertyType, typeof(DbQuery<>)) &&
-                    ReflectionHelper.IsAssignableToGenericType(property.PropertyType.GenericTypeArguments[0],
-                        typeof(IEntity<>)) &&
-                    property.PropertyType.GetGenericArguments().Any(x => x == typeof(TEntity)))))
+                    ReflectionHelper.IsAssignableToGenericType(property.PropertyType.GenericTypeArguments[0], typeof(IEntity<>)) 
+                    && property.PropertyType.GetGenericArguments().Any(x => x == typeof(TEntity))));
+            //包含DbQuery<TEntity>类型的字段，将其转换为Context.Set<TEntity>()形式。
+            //也就是说无论是使用的DbQuery(弃用的)还是DbSet的字段，最终都返回上下文。
+            if (getConcurrentDictionary)
             {
                 return DbQueryTable.AsQueryable();
             }

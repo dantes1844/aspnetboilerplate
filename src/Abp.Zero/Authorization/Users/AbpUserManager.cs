@@ -37,12 +37,30 @@ namespace Abp.Authorization.Users
         {
             get
             {
+                // 因为AbpUserStore 实现了IUserPermissionStore，所以这里可以进行转换，这里的判断就是保证实现类必须继承自该接口
                 if (!(Store is IUserPermissionStore<TUser>))
                 {
                     throw new AbpException("Store is not IUserPermissionStore");
                 }
 
+                //一个类实现了多个接口之后，转换为其中一个的对象时，只包含该接口的方法
                 return Store as IUserPermissionStore<TUser>;
+            }
+        }
+
+        /// <summary>
+        /// 转换成UserPasswordStore对象
+        /// </summary>
+        protected IUserPasswordStore<TUser, long> UserPasswordStore
+        {
+            get
+            {
+                if (!(Store is IUserPasswordStore<TUser, long>))
+                {
+                    throw new AbpException("Store is not IUserPasswordStore");
+                }
+
+                return Store as IUserPasswordStore<TUser, long>;
             }
         }
 
@@ -81,7 +99,7 @@ namespace Abp.Authorization.Users
             IdentityEmailMessageService emailService,
             ISettingManager settingManager,
             IUserTokenProviderAccessor userTokenProviderAccessor)
-            : base(userStore)
+            : base(userStore)//调用asp.net identity UserManager的构造函数，将当前的store变量传入父类
         {
             AbpStore = userStore;
             RoleManager = roleManager;
@@ -487,15 +505,22 @@ namespace Abp.Authorization.Users
             return IdentityResult.Success;
         }
 
+        /// <summary>
+        /// 检查用户名和邮箱是否有重复的
+        /// </summary>
+        /// <param name="expectedUserId"></param>
+        /// <param name="userName"></param>
+        /// <param name="emailAddress"></param>
+        /// <returns></returns>
         public virtual async Task<IdentityResult> CheckDuplicateUsernameOrEmailAddressAsync(long? expectedUserId, string userName, string emailAddress)
         {
-            var user = (await FindByNameAsync(userName));
+            var user = await FindByNameAsync(userName);
             if (user != null && user.Id != expectedUserId)
             {
                 return AbpIdentityResult.Failed(string.Format(L("Identity.DuplicateUserName"), userName));
             }
 
-            user = (await FindByEmailAsync(emailAddress));
+            user = await FindByEmailAsync(emailAddress);
             if (user != null && user.Id != expectedUserId)
             {
                 return AbpIdentityResult.Failed(string.Format(L("Identity.DuplicateEmail"), emailAddress));

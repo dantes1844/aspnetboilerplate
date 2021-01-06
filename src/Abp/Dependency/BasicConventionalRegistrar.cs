@@ -9,6 +9,7 @@ namespace Abp.Dependency
     /// </summary>
     public class BasicConventionalRegistrar : IConventionalDependencyRegistrar
     {
+        //全局的根据接口来进行注入操作的方法。
         public void RegisterAssembly(IConventionalRegistrationContext context)
         {
             //Transient

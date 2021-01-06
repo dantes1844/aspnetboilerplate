@@ -3,6 +3,10 @@ using Microsoft.AspNet.Identity;
 
 namespace Abp.IdentityFramework
 {
+
+    /// <summary>
+    /// 完全继承自父类，仅增加一个静态方法
+    /// </summary>
     public class AbpIdentityResult : IdentityResult
     {
         public AbpIdentityResult()

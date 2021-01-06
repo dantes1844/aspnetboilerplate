@@ -18,7 +18,7 @@ namespace Abp.Aspects
             {
                 throw new ArgumentNullException(nameof(concerns), $"{nameof(concerns)} should be provided!");
             }
-
+            //给当前方法添加切面关注点
             (obj as IAvoidDuplicateCrossCuttingConcerns)?.AppliedCrossCuttingConcerns.AddRange(concerns);
         }
 
@@ -52,7 +52,7 @@ namespace Abp.Aspects
             {
                 throw new ArgumentNullException(nameof(concern));
             }
-
+            //判断当前方法是否已经添加了 concern 变量指定的切面关注点
             return (obj as IAvoidDuplicateCrossCuttingConcerns)?.AppliedCrossCuttingConcerns.Contains(concern) ?? false;
         }
 

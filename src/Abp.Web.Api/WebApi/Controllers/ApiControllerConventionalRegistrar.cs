@@ -10,6 +10,10 @@ namespace Abp.WebApi.Controllers
     /// </summary>
     public class ApiControllerConventionalRegistrar : IConventionalDependencyRegistrar
     {
+        /// <summary>
+        /// 所有的api控制器注入，生命周期为瞬时
+        /// </summary>
+        /// <param name="context"></param>
         public void RegisterAssembly(IConventionalRegistrationContext context)
         {
             context.IocManager.IocContainer.Register(

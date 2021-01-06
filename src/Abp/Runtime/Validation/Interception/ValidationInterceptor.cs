@@ -19,12 +19,13 @@ namespace Abp.Runtime.Validation.Interception
 
         public override void InterceptSynchronous(IInvocation invocation)
         {
+            // 如果应用了验证拦截器，则调用该拦截器。
             if (AbpCrossCuttingConcerns.IsApplied(invocation.InvocationTarget, AbpCrossCuttingConcerns.Validation))
             {
                 invocation.Proceed();
                 return;
             }
-
+            //没有应用验证拦截器，手动调用校验，并调用下一个拦截器
             using (var validator = _iocResolver.ResolveAsDisposable<MethodInvocationValidator>())
             {
                 validator.Object.Initialize(invocation.MethodInvocationTarget, invocation.Arguments);

@@ -18,6 +18,7 @@ namespace Abp.Configuration.Startup
 {
     /// <summary>
     /// This class is used to configure ABP and modules on startup.
+    /// <para>实际的配置项类，提供各种配置的实现，在各个模块中引用到的实例均是本类的实例，且唯一</para>
     /// </summary>
     internal class AbpStartupConfiguration : DictionaryBasedConfig, IAbpStartupConfiguration
     {

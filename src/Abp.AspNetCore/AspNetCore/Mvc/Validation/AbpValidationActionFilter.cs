@@ -21,6 +21,7 @@ namespace Abp.AspNetCore.Mvc.Validation
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            //当前方法或者控制器都没有定义校验特性，直接执行方法。
             if (!_configuration.IsValidationEnabledForControllers || !context.ActionDescriptor.IsControllerAction())
             {
                 await next();

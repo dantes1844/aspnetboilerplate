@@ -4,7 +4,8 @@ using Abp.Application.Services;
 namespace Abp.WebApi.Controllers.Dynamic
 {
     /// <summary>
-    /// This class is used as base class for all dynamically created ApiControllers.  
+    /// This class is used as base class for all dynamically created ApiControllers.
+    /// 动态生成的api基类
     /// </summary>
     /// <typeparam name="T">Type of the proxied object</typeparam>
     /// <remarks>

@@ -9,6 +9,7 @@ namespace Abp.Configuration.Startup
     {
         /// <summary>
         /// Used to configure ABP Web Common module.
+        /// <para>将模块的配置项以方法的形式暴露出去，供其他模块进行设置用</para>
         /// </summary>
         public static IAbpWebCommonModuleConfiguration AbpWebCommon(this IModuleConfigurations configurations)
         {

@@ -17,6 +17,7 @@ namespace Abp.Configuration.Startup
 {
     /// <summary>
     /// Used to configure ABP and modules on startup.
+    /// <para>配置项接口，包含若干具体配置项属性</para>
     /// </summary>
     public interface IAbpStartupConfiguration : IDictionaryBasedConfig
     {

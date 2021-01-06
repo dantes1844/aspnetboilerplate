@@ -5,6 +5,7 @@ namespace Abp.Configuration.Startup
 {
     /// <summary>
     /// Used to configure authorization system.
+    /// <para>权限校验配置项</para>
     /// </summary>
     public interface IAuthorizationConfiguration
     {

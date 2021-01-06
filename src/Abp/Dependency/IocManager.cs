@@ -23,7 +23,7 @@ namespace Abp.Dependency
 
         /// <summary>
         /// Singletone instance for Castle ProxyGenerator.
-        /// From Castle.Core documentation it is highly recomended to use single instance of ProxyGenerator to avoid memoryleaks and performance issues
+        /// From Castle.Core documentation it is highly recommended to use single instance of ProxyGenerator to avoid memoryleaks and performance issues
         /// Follow next links for more details:
         /// <a href="https://github.com/castleproject/Core/blob/master/docs/dynamicproxy.md">Castle.Core documentation</a>,
         /// <a href="http://kozmic.net/2009/07/05/castle-dynamic-proxy-tutorial-part-xii-caching/">Article</a>
@@ -65,6 +65,7 @@ namespace Abp.Dependency
 
         protected virtual IWindsorContainer CreateContainer()
         {
+            //用一个单例的代理生成器生成容器
             return new WindsorContainer(new DefaultProxyFactory(ProxyGeneratorInstance));
         }
 

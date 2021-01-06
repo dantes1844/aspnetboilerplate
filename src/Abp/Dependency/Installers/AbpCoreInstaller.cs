@@ -21,10 +21,21 @@ namespace Abp.Dependency.Installers
 {
     internal class AbpCoreInstaller : IWindsorInstaller
     {
+        /// <summary>
+        /// 这个方法是Castle自动调用
+        /// <para>参考 https://github.com/castleproject/Windsor/blob/master/docs/installers.md </para>
+        /// </summary>
+        /// <param name="container"></param>
+        /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+            //InstallerFactory scan only for public types
+
+            //在这里统一注册所有的配置项，生命周期均为单例模式
             container.Register(
-                Component.For<IUnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions>().ImplementedBy<UnitOfWorkDefaultOptions>().LifestyleSingleton(),
+                //for后面可以跟最多四个实现.For<IUnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions>()
+                //然后通过ImplementedBy选择最终的实现。不知道目的是什么
+                Component.For<IUnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions, UnitOfWorkDefaultOptions>().ImplementedBy<UnitOfWorkDefaultOptions>().LifestyleSingleton(),
                 Component.For<INavigationConfiguration, NavigationConfiguration>().ImplementedBy<NavigationConfiguration>().LifestyleSingleton(),
                 Component.For<ILocalizationConfiguration, LocalizationConfiguration>().ImplementedBy<LocalizationConfiguration>().LifestyleSingleton(),
                 Component.For<IAuthorizationConfiguration, AuthorizationConfiguration>().ImplementedBy<AuthorizationConfiguration>().LifestyleSingleton(),
