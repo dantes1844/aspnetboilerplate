@@ -85,6 +85,7 @@ namespace Abp
 
         private void RegisterInterceptors()
         {
+            //这是将拦截器类进行注册，它应该是由Castle自己使用的。在Abp中并没有使用它的实例
             IocManager.Register(typeof(AbpAsyncDeterminationInterceptor<UnitOfWorkInterceptor>), DependencyLifeStyle.Transient);
             IocManager.Register(typeof(AbpAsyncDeterminationInterceptor<AuditingInterceptor>), DependencyLifeStyle.Transient);
             IocManager.Register(typeof(AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>), DependencyLifeStyle.Transient);

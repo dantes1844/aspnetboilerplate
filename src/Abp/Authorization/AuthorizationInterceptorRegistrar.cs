@@ -23,6 +23,7 @@ namespace Abp.Authorization
             if (ShouldIntercept(handler.ComponentModel.Implementation))
             {
                 //这里与AbpKernelModule中的 RegisterInterceptors有什么不一样呢
+                //这里是添加拦截器，而AbpKernelModule是对拦截器类进行注入。两个不同的操作。
                 handler.ComponentModel.Interceptors.Add(new InterceptorReference(typeof(AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>)));
             }
         }

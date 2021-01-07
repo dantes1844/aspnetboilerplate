@@ -34,10 +34,15 @@ namespace Abp.Tests.Authorization
             //AuthorizationInterceptor不注册时,提示AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>找不到依赖
             //AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>不注册时,容器报错提示未注入
             LocalIocManager.Register<AuthorizationInterceptor>(DependencyLifeStyle.Transient);
+            //这个操作就相当于AbpKernelModule中的RegisterInterceptors方法
             LocalIocManager.Register<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>(DependencyLifeStyle.Transient);
 
             LocalIocManager.Register<IAuthorizationHelper, AuthorizationHelper>(DependencyLifeStyle.Transient);
             LocalIocManager.IocContainer.Register(
+                //这里的操作有两个功能
+                //1:将几个类添加到容器中。
+                //2:给几个类的实例添加拦截器。因为拦截器也是在IRegistration实例上操作的
+                //这里同时对该实例( Component.For<MyTestClassToBeAuthorized_Sync>()返回的)进行两个操作
                 Component.For<MyTestClassToBeAuthorized_Sync>().Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>().LifestyleTransient(),
                 Component.For<MyTestClassToBeAuthorized_Async>().Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>().LifestyleTransient(),
                 Component.For<MyTestClassToBeAllowProtected_Async>().Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>().LifestyleTransient(),
