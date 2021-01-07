@@ -28,11 +28,16 @@ namespace Abp.Tests.Dependency.Interceptors
             }
         }
 
+        /// <summary>
+        /// 实现 拦截器的方法
+        /// </summary>
         public class BracketInterceptor : IInterceptor
         {
             public void Intercept(IInvocation invocation)
             {
+                //本身的方法调用
                 invocation.Proceed();
+                //对方法返回值进行包装处理
                 invocation.ReturnValue = "(" + invocation.ReturnValue + ")";
             }
         }

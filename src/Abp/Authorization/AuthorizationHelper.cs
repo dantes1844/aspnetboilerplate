@@ -12,6 +12,10 @@ using Abp.Runtime.Session;
 
 namespace Abp.Authorization
 {
+
+    /// <summary>
+    /// 实际的权限校验类
+    /// </summary>
     public class AuthorizationHelper : IAuthorizationHelper, ITransientDependency
     {
         public IAbpSession AbpSession { get; set; }

@@ -66,7 +66,7 @@ namespace Abp.Localization.Dictionaries.Xml
 
             var dictionary = new XmlLocalizationDictionary(CultureInfo.GetCultureInfo(cultureName));
 
-            var dublicateNames = new List<string>();
+            var duplicateNames = new List<string>();
 
             var textNodes = xmlDocument.SelectNodes("/localizationDictionary/texts/text");
             if (textNodes != null)
@@ -81,16 +81,16 @@ namespace Abp.Localization.Dictionaries.Xml
 
                     if (dictionary.Contains(name))
                     {
-                        dublicateNames.Add(name);
+                        duplicateNames.Add(name);
                     }
 
                     dictionary[name] = (node.GetAttributeValueOrNull("value") ?? node.InnerText).NormalizeLineEndings();
                 }
             }
 
-            if (dublicateNames.Count > 0)
+            if (duplicateNames.Count > 0)
             {
-                throw new AbpException("A dictionary can not contain same key twice. There are some duplicated names: " + dublicateNames.JoinAsString(", "));
+                throw new AbpException("A dictionary can not contain same key twice. There are some duplicated names: " + duplicateNames.JoinAsString(", "));
             }
 
             return dictionary;

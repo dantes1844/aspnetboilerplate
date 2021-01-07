@@ -22,12 +22,21 @@ namespace Abp.Authorization
             invocation.Proceed();
         }
 
+        /// <summary>
+        /// 同步的权限校验方法
+        /// </summary>
+        /// <param name="invocation"></param>
         public override void InterceptSynchronous(IInvocation invocation)
         {
             _authorizationHelper.Authorize(invocation.MethodInvocationTarget, invocation.TargetType);
             invocation.Proceed();
         }
 
+        /// <summary>
+        /// 异步的权限校验方法
+        /// </summary>
+        /// <param name="invocation"></param>
+        /// <returns></returns>
         protected override async Task InternalInterceptAsynchronous(IInvocation invocation)
         {
             var proceedInfo = invocation.CaptureProceedInfo();

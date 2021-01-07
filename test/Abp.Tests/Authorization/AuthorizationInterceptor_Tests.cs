@@ -29,8 +29,13 @@ namespace Abp.Tests.Authorization
 
             LocalIocManager.Register<IAuthorizationConfiguration, AuthorizationConfiguration>();
             LocalIocManager.Register<IMultiTenancyConfig, MultiTenancyConfig>();
+
+            //AuthorizationInterceptor AbpAsyncDeterminationInterceptor<AuthorizationInterceptor> 必须都注册
+            //AuthorizationInterceptor不注册时,提示AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>找不到依赖
+            //AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>不注册时,容器报错提示未注入
             LocalIocManager.Register<AuthorizationInterceptor>(DependencyLifeStyle.Transient);
             LocalIocManager.Register<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>(DependencyLifeStyle.Transient);
+
             LocalIocManager.Register<IAuthorizationHelper, AuthorizationHelper>(DependencyLifeStyle.Transient);
             LocalIocManager.IocContainer.Register(
                 Component.For<MyTestClassToBeAuthorized_Sync>().Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>().LifestyleTransient(),

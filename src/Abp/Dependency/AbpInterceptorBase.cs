@@ -3,6 +3,10 @@ using System.Threading.Tasks;
 
 namespace Abp.Dependency
 {
+
+    /// <summary>
+    /// 异步拦截器的父类
+    /// </summary>
     public abstract class AbpInterceptorBase : IAsyncInterceptor
     {
         public virtual void InterceptAsynchronous(IInvocation invocation)

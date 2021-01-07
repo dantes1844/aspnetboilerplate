@@ -36,6 +36,7 @@ namespace Abp.Configuration.Startup
         {
             configuration.ReplaceService(typeof(TType), () =>
             {
+                //官网说的是先注册的作为实际绑定。那么这里再次注册为什么能替换掉之前的呢？也没有调用用IsDefault()
                 configuration.IocManager.Register<TType, TImpl>(lifeStyle);
             });
         }

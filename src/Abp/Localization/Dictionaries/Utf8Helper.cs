@@ -20,12 +20,8 @@ namespace Abp.Localization.Dictionaries
                 return false;
             }
 
-            if (!(bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF))
-            {
-                return false;
-            }
-
-            return true;
+            //前三位分别是 0xEF 0xBB 0xBF 就是包含bom头的文本格式
+            return bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
         }
     }
 }

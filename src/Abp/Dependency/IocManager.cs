@@ -109,11 +109,15 @@ namespace Abp.Dependency
 
         /// <summary>
         /// Registers a type as self registration.
+        /// <para>将当前类注册为自己的实例，默认单例</para>
+        /// <para>参考连接 https://github.com/castleproject/Windsor/blob/master/docs/registering-components-one-by-one.md </para>
         /// </summary>
         /// <typeparam name="TType">Type of the class</typeparam>
         /// <param name="lifeStyle">Lifestyle of the objects of this type</param>
         public void Register<TType>(DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton) where TType : class
         {
+            //注册的对象必须是IRegistration
+            //最简单的方法就是使用Component.For方法,它返回IRegistration对象实例
             IocContainer.Register(ApplyLifestyle(Component.For<TType>(), lifeStyle));
         }
 
@@ -129,6 +133,7 @@ namespace Abp.Dependency
 
         /// <summary>
         /// Registers a type with it's implementation.
+        /// <para>注册实现类为接口的实例，默认单例</para>
         /// </summary>
         /// <typeparam name="TType">Registering type</typeparam>
         /// <typeparam name="TImpl">The type that implements <typeparamref name="TType"/></typeparam>
@@ -137,6 +142,11 @@ namespace Abp.Dependency
             where TType : class
             where TImpl : class, TType
         {
+            //IocContainer.Register(ApplyLifestyle(Component.For(typeof(TType)).ImplementedBy(typeof(TImpl)), lifeStyle));
+            //以上注释掉的为非泛型版本
+            //一个接口可以同时注册多个类，但是以第一次注册的为准（AutoFac以最后一次注入的为准）
+            //可以通过在最后一次的注册上调用.IsDefault()方法将其设置为默认的实现。
+            //如果想让多个注入同时存在，给他们一个唯一的名字即可 Component.For<IMyService>().Named("OtherServiceImpl").ImplementedBy<OtherServiceImpl>()
             IocContainer.Register(ApplyLifestyle(Component.For<TType, TImpl>().ImplementedBy<TImpl>(), lifeStyle));
         }
 
