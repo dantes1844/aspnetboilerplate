@@ -259,7 +259,7 @@ namespace Abp.Reflection
                 return false;
             }
 
-            if (method.Name.Length < 5)
+            if (method.Name.Length < 5)//是否因为属性的方法叫做 _getter?
             {
                 return false;
             }

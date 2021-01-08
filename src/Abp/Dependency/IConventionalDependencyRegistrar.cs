@@ -1,7 +1,8 @@
 ﻿namespace Abp.Dependency
 {
     /// <summary>
-    /// This interface is used to register dependencies by conventions. 
+    /// This interface is used to register dependencies by conventions.
+    /// <para>注册器：快速注册到容器中</para>
     /// </summary>
     /// <remarks>
     /// Implement this interface and register to <see cref="IocManager.AddConventionalRegistrar"/> method to be able

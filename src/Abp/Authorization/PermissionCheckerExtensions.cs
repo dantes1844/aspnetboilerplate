@@ -110,6 +110,7 @@ namespace Abp.Authorization
             {
                 foreach (var permissionName in permissionNames)
                 {
+                    //这里，如果自己的类实现了相关的权限校验，则调用自己实现的，否则就使用abp默认实现
                     if (!(await permissionChecker.IsGrantedAsync(permissionName)))
                     {
                         return false;

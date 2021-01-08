@@ -9,6 +9,8 @@ namespace Abp.Dependency
     /// </summary>
     public abstract class AbpInterceptorBase : IAsyncInterceptor
     {
+        #region 这三个方法是异步拦截器实例必须要实现的
+        
         public virtual void InterceptAsynchronous(IInvocation invocation)
         {
             invocation.ReturnValue = InternalInterceptAsynchronous(invocation);
@@ -19,7 +21,9 @@ namespace Abp.Dependency
             invocation.ReturnValue = InternalInterceptAsynchronous<TResult>(invocation);
         }
 
-        public abstract void InterceptSynchronous(IInvocation invocation);
+        public abstract void InterceptSynchronous(IInvocation invocation); 
+
+        #endregion
 
         protected abstract Task InternalInterceptAsynchronous(IInvocation invocation);
 

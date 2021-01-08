@@ -45,6 +45,7 @@ namespace Abp
     {
         public override void PreInitialize()
         {
+            //核心模块将快捷注册模块加入到注册器中，供后边遍历用
             IocManager.AddConventionalRegistrar(new BasicConventionalRegistrar());
 
             IocManager.Register<IScopedIocResolver, ScopedIocResolver>(DependencyLifeStyle.Transient);
@@ -62,6 +63,8 @@ namespace Abp
 
         public override void Initialize()
         {
+            // Castle的注册方式是：最先注册的作为最终的注入
+            // 所以在最开始的时候首先调用ReplaceService，这样就能保证Replace的实现作为第一个注册的对象
             foreach (var replaceAction in ((AbpStartupConfiguration)Configuration).ServiceReplaceActions.Values)
             {
                 replaceAction();

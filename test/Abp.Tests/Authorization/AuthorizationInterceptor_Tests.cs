@@ -6,6 +6,7 @@ using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Domain.Uow;
 using Abp.Runtime.Session;
+using Castle.Core;
 using Castle.MicroKernel.Registration;
 using NSubstitute;
 using Shouldly;
@@ -40,10 +41,10 @@ namespace Abp.Tests.Authorization
             LocalIocManager.Register<IAuthorizationHelper, AuthorizationHelper>(DependencyLifeStyle.Transient);
             LocalIocManager.IocContainer.Register(
                 //这里的操作有两个功能
-                //1:将几个类添加到容器中。
-                //2:给几个类的实例添加拦截器。因为拦截器也是在IRegistration实例上操作的
                 //这里同时对该实例( Component.For<MyTestClassToBeAuthorized_Sync>()返回的)进行两个操作
-                Component.For<MyTestClassToBeAuthorized_Sync>().Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>().LifestyleTransient(),
+                Component.For<MyTestClassToBeAuthorized_Sync>()//1:将几个类添加到容器中。
+                    .Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>()//2:给几个类的实例添加拦截器。因为拦截器也是在IRegistration实例上操作的
+                    .LifestyleTransient(),//将拦截器设置为瞬时的：官方建议无特殊原因应始终使用瞬时的，避免比使用拦截器的对象生命周期更长
                 Component.For<MyTestClassToBeAuthorized_Async>().Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>().LifestyleTransient(),
                 Component.For<MyTestClassToBeAllowProtected_Async>().Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>().LifestyleTransient(),
                 Component.For<MyTestClassToBeAllowProtected_Sync>().Interceptors<AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>>().LifestyleTransient()
@@ -64,7 +65,7 @@ namespace Abp.Tests.Authorization
             permissionChecker.IsGranted("Permission1").Returns(true);
             permissionChecker.IsGranted("Permission2").Returns(true);
             permissionChecker.IsGranted("Permission3").Returns(false); //Permission3 is not granted
-
+            //替换默认的权限校验类
             LocalIocManager.IocContainer.Register(Component.For<IPermissionChecker>().Instance(permissionChecker));
 
             _syncObj = LocalIocManager.Resolve<MyTestClassToBeAuthorized_Sync>();
@@ -163,6 +164,7 @@ namespace Abp.Tests.Authorization
             LocalIocManager.Resolve<IAbpSession>().UserId.Returns((int?) null);
         }
 
+        //[Interceptor(typeof(AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>))] // 通过打标签也可以实现拦截器功能
         public class MyTestClassToBeAuthorized_Sync
         {
             public bool Called_MethodWithoutPermission { get; private set; }

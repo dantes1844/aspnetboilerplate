@@ -37,6 +37,7 @@ namespace Abp.Configuration.Startup
             configuration.ReplaceService(typeof(TType), () =>
             {
                 //官网说的是先注册的作为实际绑定。那么这里再次注册为什么能替换掉之前的呢？也没有调用用IsDefault()
+                //解释：在AbpKernelModule.Initialize方法中首先调用的就是Replace。所以他们是最先被注册的，也就是最终使用的注入
                 configuration.IocManager.Register<TType, TImpl>(lifeStyle);
             });
         }
