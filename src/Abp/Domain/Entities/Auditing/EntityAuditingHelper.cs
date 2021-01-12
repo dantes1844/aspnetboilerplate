@@ -23,6 +23,7 @@ namespace Abp.Domain.Entities.Auditing
 
             if (entityWithCreationTime.CreationTime == default(DateTime))
             {
+                AbpDebug.WriteLine($"Clock.Provider:{Clock.Provider}");
                 entityWithCreationTime.CreationTime = Clock.Now;
             }
 

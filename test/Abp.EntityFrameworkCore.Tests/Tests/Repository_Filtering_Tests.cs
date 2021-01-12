@@ -4,9 +4,12 @@ using Abp.Domain.Uow;
 using Abp.EntityFrameworkCore.Tests.Domain;
 using Shouldly;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Abp.Timing;
 using Xunit;
+using TestClass = Abp.EntityFrameworkCore.Tests.Domain.TestClass;
 
 namespace Abp.EntityFrameworkCore.Tests.Tests
 {
@@ -26,7 +29,7 @@ namespace Abp.EntityFrameworkCore.Tests.Tests
             _ticketListItemRepository = Resolve<IRepository<TicketListItem>>();
         }
 
-        override protected void PostInitialize()
+        protected override void PostInitialize()
         {
             Resolve<IMultiTenancyConfig>().IsEnabled = true;
         }

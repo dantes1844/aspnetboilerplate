@@ -9,7 +9,8 @@ namespace Abp
     {
         public static void WriteLine(string message)
         {
-            Debug.WriteLine($"===>>>调试信息:{message}");
+            Debug.WriteLine($"============>>>{DateTime.Now:yyyy-MM-dd HH:mm:ss} 调试信息:");
+            Debug.WriteLine($"{message}");
         }
     }
 }

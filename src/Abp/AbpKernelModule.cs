@@ -128,7 +128,9 @@ namespace Abp
 
         private void AddUnitOfWorkFilters()
         {
+            //注册伪删除过滤器，默认启用
             Configuration.UnitOfWork.RegisterFilter(AbpDataFilters.SoftDelete, true);
+
             Configuration.UnitOfWork.RegisterFilter(AbpDataFilters.MustHaveTenant, true);
             Configuration.UnitOfWork.RegisterFilter(AbpDataFilters.MayHaveTenant, true);
         }
@@ -222,6 +224,8 @@ namespace Abp
         {
             if (!IocManager.IsRegistered<IGuidGenerator>())
             {
+                //在PreInitialize里已经注册了ITransientDependency，这里的注入已经不起作用了
+                //或许只能通过单利模式来获取SequentialGuidGenerator实例了
                 IocManager.IocContainer.Register(
                     Component
                         .For<IGuidGenerator, SequentialGuidGenerator>()

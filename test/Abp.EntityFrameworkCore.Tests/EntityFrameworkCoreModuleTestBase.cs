@@ -69,6 +69,10 @@ namespace Abp.EntityFrameworkCore.Tests
                             }
                         }
                     });
+
+                    var guidTest = new GuidGeneratorTesterClass();
+                    context.GuidGeneratorTesterClass.Add(guidTest);
+                    context.SaveChanges();
                 });
 
             using (var context = LocalIocManager.Resolve<SupportDbContext>())

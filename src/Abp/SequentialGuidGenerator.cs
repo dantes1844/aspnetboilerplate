@@ -7,6 +7,7 @@ namespace Abp
     /// <summary>
     /// Implements <see cref="IGuidGenerator"/> by creating sequential Guids.
     /// This code is taken from https://github.com/jhtodd/SequentialGuid/blob/master/SequentialGuid/Classes/SequentialGuid.cs
+    /// <para>连续的Guid生成器，单例模式</para>
     /// </summary>
     public class SequentialGuidGenerator : IGuidGenerator
     {

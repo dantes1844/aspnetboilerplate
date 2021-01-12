@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Abp.Timing;
@@ -55,6 +56,17 @@ namespace Abp.EntityFrameworkCore.Tests.Domain
 
             DomainEvents.Add(new BlogUrlChangedEventData(this, oldUrl));
         }
+    }
+
+    public class BlogSon : Blog { }
+
+    public class GuidGeneratorTesterClass 
+    {
+        /// <summary>
+        /// 这个ID的值会自动生成，或许是ef core做的这件事，总之，AbpDbContext中的给Guid值赋值的方法作用还不明确
+        /// </summary>
+        [Key]
+        public Guid Id { get; set; }
     }
 
     public class BlogCategory: AggregateRoot, IHasCreationTime

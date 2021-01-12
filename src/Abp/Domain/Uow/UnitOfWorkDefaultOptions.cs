@@ -24,7 +24,14 @@ namespace Abp.Domain.Uow
         /// <inheritdoc/>
         public IsolationLevel? IsolationLevel { get; set; }
 
+        /// <summary>
+        /// 数据过滤器只读列表，暴露给外面使用
+        /// </summary>
         public IReadOnlyList<DataFilterConfiguration> Filters => _filters;
+        
+        /// <summary>
+        /// 数据过滤器，内部使用
+        /// </summary>
         private readonly List<DataFilterConfiguration> _filters;
 
         public List<Func<Type, bool>> ConventionalUowSelectors { get; }
@@ -44,6 +51,12 @@ namespace Abp.Domain.Uow
             };
         }
 
+        /// <summary>
+        /// 注册过滤器
+        /// <para>应该可以注册自己的过滤器</para>
+        /// </summary>
+        /// <param name="filterName"></param>
+        /// <param name="isEnabledByDefault"></param>
         public void RegisterFilter(string filterName, bool isEnabledByDefault)
         {
             if (_filters.Any(f => f.FilterName == filterName))

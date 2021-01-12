@@ -16,6 +16,14 @@ namespace Abp.EntityFrameworkCore.Tests.Ef
 
         public DbSet<BlogCategory> BlogCategories { get; set; }
 
+        #region 添加的测试类
+
+        public DbSet<BlogSon> BlogSons { get; set; }
+
+        public DbSet<GuidGeneratorTesterClass> GuidGeneratorTesterClass { get; set; } 
+
+        #endregion
+
         public DbSet<SubBlogCategory> SubBlogCategories { get; set; }
 
         public BloggingDbContext(DbContextOptions<BloggingDbContext> options)
@@ -28,6 +36,7 @@ namespace Abp.EntityFrameworkCore.Tests.Ef
         {
             modelBuilder.Entity<Blog>(b =>
             {
+                //OwnsOne https://docs.microsoft.com/en-us/ef/core/modeling/owned-entities
                 b.OwnsOne(t => t.BlogTime, x =>
                     {
                         x.Property(p => p.LastAccessTime).HasConversion(new AbpDateTimeValueConverter());

@@ -33,6 +33,10 @@ namespace Abp.Linq.Expressions
             return Expression.Lambda<Func<T, bool>>(Expression.AndAlso(left, right), parameter);
         }
 
+        /// <summary>
+        /// 修改表达式树：表达式树是不可变数据，要对其进行修改，需复制一个对象，修改复制的对象
+        /// <para>参考链接 https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/expression-trees/how-to-modify-expression-trees</para>
+        /// </summary>
         class ReplaceExpressionVisitor : ExpressionVisitor
         {
             private readonly Expression _oldValue;

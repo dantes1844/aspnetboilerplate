@@ -1,4 +1,5 @@
 ﻿using System;
+using Abp.Domain.Entities;
 using Abp.Reflection;
 using Shouldly;
 using Xunit;

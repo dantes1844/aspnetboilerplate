@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -113,12 +114,15 @@ namespace Abp.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            //https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.metadata.imutableentitytype?view=efcore-5.0
+            //This interface(IMutableEntityType) is used during model creation and allows the metadata to be modified.
+            //Once the model is built, IEntityType represents a read-only view of the same metadata.
+            foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             {
-                ConfigureGlobalFiltersMethodInfo
-                    .MakeGenericMethod(entityType.ClrType)
-                    .Invoke(this, new object[] { modelBuilder, entityType });
+                //参考连接 https://docs.microsoft.com/en-us/dotnet/api/system.reflection.methodinfo.makegenericmethod?view=net-5.0
+                ConfigureGlobalFiltersMethodInfo //反射的MethodInfo
+                    .MakeGenericMethod(entityType.ClrType)//将遍历得到的实际类型传入泛型方法中
+                    .Invoke(this, new object[] { modelBuilder, entityType });//调用实例参数的泛型方法（实际已经变成了非泛型方法）
 
                 ConfigureGlobalValueConverterMethodInfo
                     .MakeGenericMethod(entityType.ClrType)
@@ -126,9 +130,19 @@ namespace Abp.EntityFrameworkCore
             }
         }
 
+        /// <summary>
+        /// 定义一个全局过滤方法，类型为泛型。在模型创建时，添加指定的功能
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="modelBuilder"></param>
+        /// <param name="entityType"></param>
         protected void ConfigureGlobalFilters<TEntity>(ModelBuilder modelBuilder, IMutableEntityType entityType)
             where TEntity : class
         {
+            AbpDebug.WriteLine($"配置全局过滤器，替换泛型参数为实际类型参数:{typeof(TEntity)}");
+
+            //https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.metadata.imutableentitytype?view=efcore-5.0
+            //这里的BaseType，只有当前类有父类的时候，才是不空的。且还有个条件：该类必须是DbContext的DbSet属性。
             if (entityType.BaseType == null && ShouldFilterEntity<TEntity>(entityType))
             {
                 var filterExpression = CreateFilterExpression<TEntity>();
@@ -145,7 +159,12 @@ namespace Abp.EntityFrameworkCore
                 }
             }
         }
-
+        /// <summary>
+        /// 根据实体类是否实现了 ISoftDelete  IMayHaveTenant IMustHaveTenant来判断其是否需要自动组装相关过滤器
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="entityType"></param>
+        /// <returns></returns>
         protected virtual bool ShouldFilterEntity<TEntity>(IMutableEntityType entityType) where TEntity : class
         {
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
@@ -166,6 +185,11 @@ namespace Abp.EntityFrameworkCore
             return false;
         }
 
+        /// <summary>
+        /// 根据不同的接口，组装不同的过滤器表达式
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <returns></returns>
         protected virtual Expression<Func<TEntity, bool>> CreateFilterExpression<TEntity>()
             where TEntity : class
         {
@@ -173,7 +197,8 @@ namespace Abp.EntityFrameworkCore
 
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                Expression<Func<TEntity, bool>> softDeleteFilter = e => !IsSoftDeleteFilterEnabled || !((ISoftDelete) e).IsDeleted;
+                //如果未启用，查询全部，启用了，则查询过滤的
+                Expression<Func<TEntity, bool>> softDeleteFilter = e => !IsSoftDeleteFilterEnabled || !((ISoftDelete)e).IsDeleted;
                 expression = expression == null ? softDeleteFilter : CombineExpressions(expression, softDeleteFilter);
             }
 
@@ -195,10 +220,13 @@ namespace Abp.EntityFrameworkCore
         protected void ConfigureGlobalValueConverter<TEntity>(ModelBuilder modelBuilder, IMutableEntityType entityType)
             where TEntity : class
         {
-            if (entityType.BaseType == null && 
+            AbpDebug.WriteLine($"SelfType:{entityType},BaseType:{entityType.BaseType}");
+
+            //这里的BaseType，只有当前类有父类的时候，才是不空的。且还有个条件：该类必须是DbContext的DbSet属性。
+            if (entityType.BaseType == null &&
                 !typeof(TEntity).IsDefined(typeof(DisableDateTimeNormalizationAttribute), true) &&
                 !typeof(TEntity).IsDefined(typeof(OwnedAttribute), true) &&
-                !entityType.IsOwned())
+                !entityType.IsOwned()) //OwnsOne https://docs.microsoft.com/en-us/ef/core/modeling/owned-entities
             {
                 var dateTimeValueConverter = new AbpDateTimeValueConverter();
                 var dateTimePropertyInfos = DateTimePropertyInfoHelper.GetDatePropertyInfos(typeof(TEntity));
@@ -246,16 +274,16 @@ namespace Abp.EntityFrameworkCore
         {
             var uowOptions = initializationContext.UnitOfWork.Options;
             if (uowOptions.Timeout.HasValue &&
-                Database.IsRelational() && 
+                Database.IsRelational() &&
                 !Database.GetCommandTimeout().HasValue)
             {
                 Database.SetCommandTimeout(uowOptions.Timeout.Value.TotalSeconds.To<int>());
             }
-            
+
             ChangeTracker.CascadeDeleteTiming = CascadeTiming.OnSaveChanges;
             ChangeTracker.DeleteOrphansTiming = CascadeTiming.OnSaveChanges;
         }
-        
+
         protected virtual EntityChangeReport ApplyAbpConcepts()
         {
             var changeReport = new EntityChangeReport();
@@ -264,6 +292,7 @@ namespace Abp.EntityFrameworkCore
 
             foreach (var entry in ChangeTracker.Entries().ToList())
             {
+                //不是修改状态下，OwnedEntity发生了改变，也被视为修改操作
                 if (entry.State != EntityState.Modified && entry.CheckOwnedEntityChange())
                 {
                     Entry(entry.Entity).State = EntityState.Modified;
@@ -293,6 +322,17 @@ namespace Abp.EntityFrameworkCore
             AddDomainEvents(changeReport.DomainEvents, entry.Entity);
         }
 
+        /// <summary>
+        /// 做了以下几件事情：
+        /// <para>1:检查Guid是否完整，不完整给它赋值</para>
+        /// <para>2:检查IMustHaveTenant，实现了就给设置默认的租户ID，前提是开启了自动给租户ID赋值功能</para>
+        /// <para>3:检查IMayHaveTenant，实现了就设置当前的租户，无论是否空都执行</para>
+        /// <para>4:给审计自动赋值，包括修改/创建时间，创建人/修改人</para>
+        /// <para>5:给EventBus添加当前的实体</para>
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="userId"></param>
+        /// <param name="changeReport"></param>
         protected virtual void ApplyAbpConceptsForAddedEntity(EntityEntry entry, long? userId, EntityChangeReport changeReport)
         {
             CheckAndSetId(entry);
@@ -302,6 +342,14 @@ namespace Abp.EntityFrameworkCore
             changeReport.ChangedEntities.Add(new EntityChangeEntry(entry.Entity, EntityChangeType.Created));
         }
 
+        /// <summary>
+        /// 做了以下几件事情:
+        /// <para>1：设置审计信息，包括人员，时间等</para>
+        /// <para>2：如果实体被设置为伪删除，那么设置删除审计信息，并推送事件。否则只推送事件</para>
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="userId"></param>
+        /// <param name="changeReport"></param>
         protected virtual void ApplyAbpConceptsForModifiedEntity(EntityEntry entry, long? userId, EntityChangeReport changeReport)
         {
             SetModificationAuditProperties(entry.Entity, userId);
@@ -316,6 +364,16 @@ namespace Abp.EntityFrameworkCore
             }
         }
 
+        /// <summary>
+        /// 做了以下几件事情：
+        /// <para>1：如果是硬删除，增加事件推送</para>
+        /// <para>2：设置删除标记</para>
+        /// <para>3：设置删除审计信息</para>
+        /// <para>4：发送删除实体事件</para>
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="userId"></param>
+        /// <param name="changeReport"></param>
         protected virtual void ApplyAbpConceptsForDeletedEntity(EntityEntry entry, long? userId, EntityChangeReport changeReport)
         {
             if (IsHardDeleteEntity(entry))
@@ -329,6 +387,11 @@ namespace Abp.EntityFrameworkCore
             changeReport.ChangedEntities.Add(new EntityChangeEntry(entry.Entity, EntityChangeType.Deleted));
         }
 
+        /// <summary>
+        /// 判断是否是真删除，真删除的信息是与租户挂钩的，必须有租户信息才可以执行真删除操作
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <returns></returns>
         protected virtual bool IsHardDeleteEntity(EntityEntry entry)
         {
             if (CurrentUnitOfWorkProvider?.Current?.Items == null)
@@ -369,6 +432,12 @@ namespace Abp.EntityFrameworkCore
             generatesDomainEventsEntity.DomainEvents.Clear();
         }
 
+        /// <summary>
+        /// 判断当前实体是否是Guid作为主键，如果是检查主键是否是空，空的则给他生成一个主键。
+        /// 其他自增长类型则无需代码层面处理。
+        /// <para>目前看应该是没有这种情况</para>
+        /// </summary>
+        /// <param name="entry"></param>
         protected virtual void CheckAndSetId(EntityEntry entry)
         {
             //Set GUID Ids
@@ -380,6 +449,7 @@ namespace Abp.EntityFrameworkCore
                 if (idPropertyEntry != null && idPropertyEntry.Metadata.ValueGenerated == ValueGenerated.Never)
                 {
                     entity.Id = GuidGenerator.Create();
+                    throw new Exception("发现一个空的Guid值了");
                 }
             }
         }
@@ -457,6 +527,10 @@ namespace Abp.EntityFrameworkCore
             EntityAuditingHelper.SetModificationAuditProperties(MultiTenancyConfig, entityAsObj, AbpSession.TenantId, userId);
         }
 
+        /// <summary>
+        /// 设置删除标记
+        /// </summary>
+        /// <param name="entry"></param>
         protected virtual void CancelDeletionForSoftDelete(EntityEntry entry)
         {
             if (!(entry.Entity is ISoftDelete))
@@ -469,6 +543,12 @@ namespace Abp.EntityFrameworkCore
             entry.Entity.As<ISoftDelete>().IsDeleted = true;
         }
 
+        /// <summary>
+        /// 为什么不跟SetCreationAuditProperties，SetModificationAuditProperties一样放在静态类里？
+        /// answer：vNext里已经改到一起了
+        /// </summary>
+        /// <param name="entityAsObj"></param>
+        /// <param name="userId"></param>
         protected virtual void SetDeletionAuditProperties(object entityAsObj, long? userId)
         {
             if (entityAsObj is IHasDeletionTime)
@@ -517,6 +597,10 @@ namespace Abp.EntityFrameworkCore
             }
         }
 
+        /// <summary>
+        /// 获取当前审计人员的ID，如果AbpSession中有UserId，并且与工作单元中当前的租户ID一致，那么就是要使用的用户ID，否则返回空
+        /// </summary>
+        /// <returns></returns>
         protected virtual long? GetAuditUserId()
         {
             if (AbpSession.UserId.HasValue &&
