@@ -217,6 +217,12 @@ namespace Abp.EntityFrameworkCore
             return expression;
         }
 
+        /// <summary>
+        /// 把所有的时间数据按照指定的格式进行转换
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="modelBuilder"></param>
+        /// <param name="entityType"></param>
         protected void ConfigureGlobalValueConverter<TEntity>(ModelBuilder modelBuilder, IMutableEntityType entityType)
             where TEntity : class
         {

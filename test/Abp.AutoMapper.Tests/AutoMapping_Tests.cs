@@ -131,7 +131,7 @@ namespace Abp.AutoMapper.Tests
                         };
             var list2 = new List<MyAutoMapKeyClass2>
                         {
-                            new MyAutoMapKeyClass2 { Id = 1, SecondId = 10, ThirdId = 100, TestProp = "Test value 1", Value = 5},
+                            new MyAutoMapKeyClass2 { Id = 12, SecondId = 10, ThirdId = 100, TestProp = "Test value 1", Value = 5},
                             new MyAutoMapKeyClass2 { Id = 2,  SecondId = 20, ThirdId = 200,TestProp = "Test value 2", Value = 10}
                         };
             var list3 = new List<MyAutoMapKeyClass3>
@@ -142,7 +142,7 @@ namespace Abp.AutoMapper.Tests
 
             _mapper.Map(list1, list2);
             list2.Count.ShouldBe(2);
-            list2[0].TestProp.ShouldBe("New test value 1");
+            list2[0].TestProp.ShouldBe("New test value 1");//当把list2的第一个值的ID改成其他的时候，理论上应该是不映射才对。这里是不是有bug？
             list2[0].Value.ShouldBe(5);
             list2[1].TestProp.ShouldBe("New test value 2");
             list2[1].Value.ShouldBe(10);

@@ -11,10 +11,17 @@ namespace Abp.AutoMapper
     {
         private static readonly object SyncObj = new object();
 
+        /// <summary>
+        /// 创建自动映射
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="type">被打标签的类</param>
         public static void CreateAutoAttributeMaps(this IMapperConfigurationExpression configuration, Type type)
         {
+            //TODO 这里为什么需要锁？貌似没有并发操作？ 2021年1月14日 14:34:42
             lock (SyncObj)
             {
+                //遍历所有的自动映射标签，将它们与目标类进行映射
                 foreach (var autoMapAttribute in type.GetTypeInfo().GetCustomAttributes<AutoMapAttributeBase>())
                 {
                     autoMapAttribute.CreateMap(configuration, type);
@@ -22,6 +29,13 @@ namespace Abp.AutoMapper
             }
         }
 
+        /// <summary>
+        /// 创建映射
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="type">原始类</param>
+        /// <param name="targetTypes">目标类列表</param>
+        /// <param name="memberList">成员类型，是Source还是Destination，用来验证字段已经全部映射完毕</param>
         public static void CreateAutoAttributeMaps(this IMapperConfigurationExpression configuration, Type type, Type[] targetTypes, MemberList memberList)
         {
             //Get all the properties in the source that have the AutoMapKeyAttribute
@@ -31,6 +45,7 @@ namespace Abp.AutoMapper
 
             foreach (var targetType in targetTypes)
             {
+                //这里表示，当前类打了自动映射的标签，且类里面的字段都没有打映射主键标签，那么当前类就直接进行映射
                 if (!sourceKeysPropertyInfo.Any())
                 {
                     configuration.CreateMap(type, targetType, memberList);
@@ -39,20 +54,21 @@ namespace Abp.AutoMapper
 
                 BinaryExpression equalityComparer = null;
 
-                //In a lambda expression represent the source exemple : (source) => ...
+                //In a lambda expression represent the source example : (source) => ...
                 ParameterExpression sourceParameterExpression = Expression.Parameter(type, "source");
-                //In a lambda expression represent the target exemple : (target) => ...
+                //In a lambda expression represent the target example : (target) => ...
                 ParameterExpression targetParameterExpression = Expression.Parameter(targetType, "target");
 
 
                 //We could use multiple AutoMapKey to compare the determine equality
+                //遍历那些打了自动映射键的字段，根据属性的键进行匹配，匹配上了的才进行赋值
                 foreach (PropertyInfo propertyInfo in sourceKeysPropertyInfo)
                 {
-                    //In a lambda expression represent a specfic property of a parameter exemple : (source) => source.Id
+                    //In a lambda expression represent a specific property of a parameter example : (source) => source.Id
                     MemberExpression sourcePropertyExpression = Expression.Property(sourceParameterExpression, propertyInfo);
 
                     //Find the target a property with the same name to compare with
-                    //Exemple if we have in source the attribut AutoMapKey on the Property Id we want to get Id in the target to compare agaisnt
+                    //Example if we have in source the attribute AutoMapKey on the Property Id we want to get Id in the target to compare against
                     var targetPropertyInfo = targetType.GetProperty(sourcePropertyExpression.Member.Name);
 
                     //It happen if the property with AutoMapKeyAttribute does not exist in target
@@ -61,11 +77,11 @@ namespace Abp.AutoMapper
                         continue;
                     }
 
-                    //In a lambda expression represent a specfic property of a parameter exemple : (target) => target.Id
+                    //In a lambda expression represent a specific property of a parameter example : (target) => target.Id
                     MemberExpression targetPropertyExpression = Expression.Property(targetParameterExpression, targetPropertyInfo);
 
-                    //Compare the property defined by AutoMapKey in the source agaisnt the same property in the target
-                    //Exemple (source, target) => source.Id == target.Id
+                    //Compare the property defined by AutoMapKey in the source against the same property in the target
+                    //Example (source, target) => source.Id == target.Id
                     BinaryExpression equal = Expression.Equal(sourcePropertyExpression, targetPropertyExpression);
 
                     if (equalityComparer is null)
@@ -75,7 +91,7 @@ namespace Abp.AutoMapper
                     else
                     {
                         //If we compare multiple key we want to make an and condition between
-                        //Exemple : (source, target) => source.Email == target.Email && source.UserName == target.UserName
+                        //Example : (source, target) => source.Email == target.Email && source.UserName == target.UserName
                         equalityComparer = Expression.And(equalityComparer, equal);
                     }
                 }

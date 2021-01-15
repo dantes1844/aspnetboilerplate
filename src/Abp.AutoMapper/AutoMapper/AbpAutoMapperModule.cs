@@ -23,6 +23,7 @@ namespace Abp.AutoMapper
         {
             IocManager.Register<IAbpAutoMapperConfiguration, AbpAutoMapperConfiguration>();
 
+            //其他地方并没有注册这个，用Register应该也没问题
             Configuration.ReplaceService<ObjectMapping.IObjectMapper, AutoMapperObjectMapper>();
 
             Configuration.Modules.AbpAutoMapper().Configurators.Add(CreateCoreMappings);
@@ -56,6 +57,10 @@ namespace Abp.AutoMapper
             AbpEmulateAutoMapper.Mapper = mapper;
         }
 
+        /// <summary>
+        /// 查找所有的打了自动Map标签的类，进行绑定
+        /// </summary>
+        /// <param name="configuration"></param>
         private void FindAndAutoMapTypes(IMapperConfigurationExpression configuration)
         {
             var types = _typeFinder.Find(type =>
