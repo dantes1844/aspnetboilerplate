@@ -31,7 +31,7 @@ namespace Abp.AspNetCore.Mvc
         {
             options.Filters.AddService(typeof(AbpAuthorizationFilter));
             options.Filters.AddService(typeof(AbpAuditActionFilter));
-            options.Filters.AddService(typeof(AbpValidationActionFilter));
+            options.Filters.AddService(typeof(AbpValidationActionFilter));//全局添加方法参数校验过滤器
             options.Filters.AddService(typeof(AbpUowActionFilter));//全局添加UOW过滤器
             options.Filters.AddService(typeof(AbpExceptionFilter));
             options.Filters.AddService(typeof(AbpResultFilter));

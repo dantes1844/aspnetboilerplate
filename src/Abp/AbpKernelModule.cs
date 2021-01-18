@@ -57,7 +57,7 @@ namespace Abp
             AddUnitOfWorkFilters();
             ConfigureCaches();
             AddIgnoredTypes();
-            AddMethodParameterValidators();
+            AddMethodParameterValidators();//添加参数校验
             AddDefaultNotificationDistributor();
         }
 
@@ -207,7 +207,11 @@ namespace Abp
                 Configuration.Validation.IgnoredTypes.AddIfNotContains(ignoredType);
             }
         }
-
+        /// <summary>
+        /// 参数校验类
+        /// DataAnnotations 和 IValidatableObject 是MVC中使用的默认校验方式
+        /// CustomValidator：用户自定义校验方式
+        /// </summary>
         private void AddMethodParameterValidators()
         {
             Configuration.Validation.Validators.Add<DataAnnotationsValidator>();

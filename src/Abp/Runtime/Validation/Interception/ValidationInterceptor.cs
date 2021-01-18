@@ -17,9 +17,13 @@ namespace Abp.Runtime.Validation.Interception
             _iocResolver = iocResolver;
         }
 
+        /// <summary>
+        /// 被Castle.Windsor.DynamicProxy调用的
+        /// </summary>
+        /// <param name="invocation"></param>
         public override void InterceptSynchronous(IInvocation invocation)
         {
-            // 如果应用了验证拦截器，则调用该拦截器。
+            // 如果已经调用过验证拦截器，则直接执行下一个拦截器。
             if (AbpCrossCuttingConcerns.IsApplied(invocation.InvocationTarget, AbpCrossCuttingConcerns.Validation))
             {
                 invocation.Proceed();
@@ -31,7 +35,7 @@ namespace Abp.Runtime.Validation.Interception
                 validator.Object.Initialize(invocation.MethodInvocationTarget, invocation.Arguments);
                 validator.Object.Validate();
             }
-            
+
             invocation.Proceed();
         }
 

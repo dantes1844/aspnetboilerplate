@@ -29,6 +29,9 @@ namespace Abp.AspNetCore.Mvc.Validation
             return ActionContext.ActionArguments.GetOrDefault(parameterName);
         }
 
+        /// <summary>
+        /// 通过asp.net core本身的模型校验来判断当前参数的合法性
+        /// </summary>
         protected override void SetDataAnnotationAttributeErrors()
         {
             foreach (var state in ActionContext.ModelState)

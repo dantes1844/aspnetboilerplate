@@ -41,6 +41,14 @@ namespace Abp.Aspects
             }
         }
 
+        /// <summary>
+        /// 这里的应用逻辑应该是：控制器方法会自动调用 AbpValidationActionFilter 中的校验方法
+        /// 而业务类中则调用拦截器 ValidationInterceptor 的校验方法
+        /// 二者不会同时出现，所以增加一个标记判断是否已经经过校验了
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="concern"></param>
+        /// <returns></returns>
         public static bool IsApplied([NotNull] object obj, [NotNull] string concern)
         {
             if (obj == null)

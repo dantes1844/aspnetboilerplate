@@ -24,6 +24,11 @@ namespace Abp.Authorization
 
         }
 
+        /// <summary>
+        /// 通过AspNetCore.Identity的方法来创建Principal，并增加一个租户的Claim
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [UnitOfWork]
         public override async Task<ClaimsPrincipal> CreateAsync(TUser user)
         {

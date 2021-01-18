@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Abp.AspNetCore.Mvc.Validation
 {
+    /// <summary>
+    /// https://stackoverflow.com/questions/42582758/asp-net-core-middleware-vs-filters
+    /// filter和middleware的区别
+    /// </summary>
     public class AbpValidationActionFilter : IAsyncActionFilter, ITransientDependency
     {
         private readonly IIocResolver _iocResolver;
@@ -28,10 +32,12 @@ namespace Abp.AspNetCore.Mvc.Validation
                 return;
             }
 
+            //首先给当前方法增加拦截器记录，表示已经经过AbpCrossCuttingConcerns.Validation处理了。
             using (AbpCrossCuttingConcerns.Applying(context.Controller, AbpCrossCuttingConcerns.Validation))
             {
                 using (var validator = _iocResolver.ResolveAsDisposable<MvcActionInvocationValidator>())
                 {
+                    //然后真正的调用Validate方法
                     validator.Object.Initialize(context);
                     validator.Object.Validate();
                 }

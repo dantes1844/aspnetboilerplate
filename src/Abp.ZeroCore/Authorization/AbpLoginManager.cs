@@ -229,6 +229,7 @@ namespace Abp.Authorization
                 return new AbpLoginResult<TTenant, TUser>(AbpLoginResultType.UserPhoneNumberIsNotConfirmed);
             }
 
+            //创建Principal
             var principal = await _claimsPrincipalFactory.CreateAsync(user);
 
             return new AbpLoginResult<TTenant, TUser>(
